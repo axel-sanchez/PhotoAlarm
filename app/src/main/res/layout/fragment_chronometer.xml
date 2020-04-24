@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="270dp"
+        android:layout_height="270dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_background"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="100"
+        android:progressDrawable="@drawable/circle_front"
+        android:rotation="-90"
+        style="?android:attr/progressBarStyleHorizontal" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_time"
+        android:textSize="50sp"
+        android:textColor="@android:color/white"
+        android:layout_centerInParent="true"/>
+
+    <RelativeLayout
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/progress">
+
+        <ImageButton
+            android:id="@+id/stop"
+            android:visibility="gone"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/circle_stop"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp" />
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/ic_play_circle_24dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <!--<com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        app:fab_expandDirection="down"
+        app:fab_addButtonPlusIconColor="#"
+        app:fab_icon="@drawable/ic_play_24dp"
+        android:layout_below="@+id/progress"
+        app:fab_addButtonColorNormal="@color/colorBrown">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_icon="@drawable/ic_play_24dp"
+            app:fab_colorNormal="#353333"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>-->
+
+</RelativeLayout>

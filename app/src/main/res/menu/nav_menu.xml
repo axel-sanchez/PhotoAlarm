@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/clock"
+        android:checkable="true"
+        android:iconTint="#ffffff"
+        android:icon="@drawable/ic_clock_24dp"
+        android:title="Reloj"/>
+
+    <item
+        android:id="@+id/weather"
+        android:checkable="true"
+        android:icon="@drawable/ic_weather_24dp"
+        android:title="Clima"/>
+
+    <item
+        android:id="@+id/alarm"
+        android:checkable="true"
+        android:icon="@drawable/ic_alarm_24dp"
+        android:title="Alarma"/>
+
+    <item
+        android:id="@+id/timer"
+        android:checkable="true"
+        android:icon="@drawable/ic_timer_24dp"
+        android:title="Temporizador"/>
+
+    <item
+        android:id="@+id/chronometer"
+        android:checkable="true"
+        android:icon="@drawable/ic_chronometer_24dp"
+        android:title="Cronómetro"/>
+</menu>
