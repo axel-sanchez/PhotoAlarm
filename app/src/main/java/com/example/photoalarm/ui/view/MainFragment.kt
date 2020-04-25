@@ -54,6 +54,8 @@ class MainFragment: PhotoAlarmFragment() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.alarm -> {
+                itemSelected = item.itemId
+                navigateTo(AlarmFragment(), false)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.timer -> {
