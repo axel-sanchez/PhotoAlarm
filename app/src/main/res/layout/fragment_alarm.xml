@@ -25,8 +25,19 @@
         android:layout_marginEnd="30dp">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnFast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:fab_colorNormal="#353333"
+            app:fab_colorPressed="@color/colorBrown"
+            app:fab_icon="@drawable/ic_flash_24dp" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnCommon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_icon="@drawable/ic_alarm_24dp"
+            app:fab_colorPressed="@color/colorBrown"
             app:fab_colorNormal="#353333"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>

@@ -39,7 +39,6 @@ class GenericRepository {
                 put(TableAlarm.Columns.COLUMN_NAME_SONG, item.song)
                 put(TableAlarm.Columns.COLUMN_NAME_IS_ACTIVE, item.isActive)
                 put(TableAlarm.Columns.COLUMN_NAME_REQUIRE_VIBRATE, item.requireVibrate)
-
             }
             db.insert(TableAlarm.Columns.TABLE_NAME, null, values)
         } catch (e: Exception) {
@@ -73,6 +72,25 @@ class GenericRepository {
             Log.e("INSERT DAY X ALARM", e.message)
             -1
         }
+    }
+
+    fun update(item: Alarm): Int {
+        val db = dbHelper.writableDatabase
+
+        val values = ContentValues().apply {
+            put(TableAlarm.Columns.COLUMN_NAME_ID, item.id)
+            put(TableAlarm.Columns.COLUMN_NAME_LABEL, item.label)
+            put(TableAlarm.Columns.COLUMN_NAME_TIME, item.time)
+            put(TableAlarm.Columns.COLUMN_NAME_SONG, item.song)
+            put(TableAlarm.Columns.COLUMN_NAME_IS_ACTIVE, item.isActive)
+            put(TableAlarm.Columns.COLUMN_NAME_REQUIRE_VIBRATE, item.requireVibrate)
+        }
+
+        // Which row to update, based on the title
+        val selection = "${TableAlarm.Columns.COLUMN_NAME_ID} = ?"
+        val selectionArgs = arrayOf(item.id.toString())
+
+        return db.update(TableAlarm.Columns.TABLE_NAME, values, selection, selectionArgs)
     }
 
     fun getAlarms(
@@ -127,14 +145,14 @@ class GenericRepository {
             )
         }
 
-        if(idsAlarms.isNotEmpty()) idsAlarms.removeRange(idsAlarms.lastIndex - 1, idsAlarms.lastIndex)
+        if(idsAlarms.isNotEmpty()) idsAlarms = idsAlarms.substring(0, idsAlarms.lastIndex)
 
         var idAlarm: Long
         var day: String
         var alarm: Alarm
 
         cursor = db.rawQuery(
-            "select a.id as idAlarm, d.name as day from alarm a inner join day_x_alarm dx on a.id = dx.id_alarm inner join day d on d.id = dx.id_day where a.id in ($idsAlarms)",
+            "select a.id, d.name from alarm a inner join day_x_alarm dx on a.id = dx.id_alarm inner join day d on d.id = dx.id_day where a.id in ($idsAlarms)",
             null
         )
 

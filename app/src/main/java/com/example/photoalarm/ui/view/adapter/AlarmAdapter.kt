@@ -3,8 +3,6 @@ package com.example.photoalarm.ui.view.adapter
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,37 +13,66 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
+import com.example.photoalarm.data.repository.GenericRepository
 import java.util.*
 
 
 class AlarmAdapter(
-    val listaDatos: List<Alarm>,
-    val vibrate: () -> Unit
-) : RecyclerView.Adapter<AlarmAdapter.ViewHolderDatos>() {
+    private val listData: MutableList<Alarm>,
+    //private val eliminar: (Alarm) -> Unit,
+    private val vibrate: () -> Unit
+) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>() {
 
-    class ViewHolderDatos(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private lateinit var repository: GenericRepository
 
         private var isSelected = false
 
         private var btnDelete: Button = itemView.findViewById(R.id.btnDelete)
-        private var checkbox: Switch = itemView.findViewById(R.id.checkbox)
+        private var switch: Switch = itemView.findViewById(R.id.swActivate)
         private var txtTime: TextView = itemView.findViewById(R.id.txtTime)
+        private var txtDays: TextView = itemView.findViewById(R.id.txtDays)
         private var hide: View = itemView.findViewById(R.id.hide)
 
         //Calendario para obtener fecha & hora
         private val calendar: Calendar = Calendar.getInstance()
 
         //Variables para obtener la hora hora
-        private val hora: Int = calendar.get(Calendar.HOUR_OF_DAY)
+        private val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
         private val minute: Int = calendar.get(Calendar.MINUTE)
 
         fun bind(alarm: Alarm, vibrate: () -> Unit) {
+
+            repository = GenericRepository.getInstance(itemView.context)
+
+            txtTime.text = alarm.time
+
+            var stringDays = ""
+
+            for (day in alarm.days){
+                stringDays += day
+            }
+
+            txtDays.text = stringDays
+
+            if(alarm.isActive) switch.isChecked = true
+
+            switch.setOnClickListener {
+                if(switch.isChecked){
+                    alarm.isActive = true
+                    repository.update(alarm)
+                } else{
+                    alarm.isActive = false
+                    repository.update(alarm)
+                }
+            }
 
             itemView.setOnClickListener {
                 if (isSelected) {
                     hide.visibility = View.GONE
                     btnDelete.visibility = View.GONE
-                    checkbox.visibility = View.VISIBLE
+                    switch.visibility = View.VISIBLE
                     isSelected = false
                 } else {
                     Toast.makeText(
@@ -62,18 +89,18 @@ class AlarmAdapter(
                     isSelected = true
                     hide.visibility = View.VISIBLE
                     btnDelete.visibility = View.VISIBLE
-                    checkbox.visibility = View.GONE
+                    switch.visibility = View.GONE
 
                     btnDelete.setOnClickListener {
                         //onDelete(alarm) por ahora solo internamente
                         hide.visibility = View.GONE
                         btnDelete.visibility = View.GONE
-                        checkbox.visibility = View.VISIBLE
+                        switch.visibility = View.VISIBLE
                     }
                 } else {
                     hide.visibility = View.GONE
                     btnDelete.visibility = View.GONE
-                    checkbox.visibility = View.VISIBLE
+                    switch.visibility = View.VISIBLE
                     isSelected = false
                 }
 
@@ -105,24 +132,39 @@ class AlarmAdapter(
                 }, //Estos valores deben ir en ese orden
                 //Al colocar en false se muestra en formato 12 horas y true en formato 24 horas
                 //Pero el sistema devuelve la hora en formato 24 horas
-                hora, minute, false
+                hour, minute, false
             )
             timePickerDialog.window!!.setBackgroundDrawable(itemView.resources.getDrawable(R.drawable.corners_qk))
             timePickerDialog.show()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
-        var view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_alarm, null, false)
-        return ViewHolderDatos(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
+        return ViewHolderData(LayoutInflater.from(parent.context).inflate(R.layout.item_alarm, null, false))
     }
 
-    override fun onBindViewHolder(holder: ViewHolderDatos, position: Int) {
-        holder.bind(listaDatos[position], vibrate)
+    override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
+        holder.bind(listData[position], vibrate)
     }
 
     override fun getItemCount(): Int {
-        return listaDatos.size
+        return listData.size
+    }
+
+    fun remove(item: Alarm) {
+        val position = listData.indexOf(listData.find { x -> x.id == item.id })
+        listData.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun update(item: Alarm) {
+        val position = listData.indexOf(listData.find { x -> x.id == item.id })
+        listData[position] = item
+        notifyItemChanged(position)
+    }
+
+    fun add(item: Alarm) {
+        listData.add(0, item)
+        notifyDataSetChanged()
     }
 }
