@@ -1,5 +1,6 @@
 package com.example.photoalarm.ui.view
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
+import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 
@@ -24,6 +26,8 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        vibe = context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,11 +40,13 @@ class AlarmFragment : PhotoAlarmFragment() {
 
         rvAlarms = view.findViewById(R.id.rvAlarms)
 
-        setAdapter(mutableListOf(Alarm(), Alarm(), Alarm(), Alarm(), Alarm(), Alarm()))
+        var repository = GenericRepository.getInstance(context!!)
+
+        setAdapter(repository.getAlarms(arrayOf(), arrayOf(), null))
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>){
-        viewAdapter = AlarmAdapter(alarms, { vibrate() })
+        viewAdapter = AlarmAdapter(alarms) { vibrate() }
 
         viewManager = LinearLayoutManager(this.requireContext())
 

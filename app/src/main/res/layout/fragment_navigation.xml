@@ -25,6 +25,7 @@
         android:id="@+id/navegador"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        app:labelVisibilityMode="unlabeled"
         android:layout_alignParentBottom="true"
         app:itemTextColor="@android:color/white"
         app:itemIconTint="@drawable/bottom_navigation_view_selector"

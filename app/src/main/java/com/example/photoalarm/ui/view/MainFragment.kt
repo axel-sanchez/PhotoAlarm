@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.photoalarm.R
+import com.example.photoalarm.data.models.Day
+import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.example.photoalarm.ui.view.interfaces.INavigationHost
 import kotlinx.android.synthetic.main.fragment_navigation.*
@@ -14,6 +16,9 @@ import kotlinx.android.synthetic.main.fragment_navigation.*
 const val ARG_ITEM = "nombre"
 
 class MainFragment: PhotoAlarmFragment() {
+
+    //Inicializo el repositorio singleton
+    private lateinit var repository: GenericRepository
 
     private val firstItem = R.id.alarm
     private var itemSelected = firstItem
@@ -23,24 +28,25 @@ class MainFragment: PhotoAlarmFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        repository = GenericRepository.getInstance(context!!)
+
+        repository.insert(Day(0,"Lunes"))
+        repository.insert(Day(0,"Martes"))
+        repository.insert(Day(0,"Miércoles"))
+        repository.insert(Day(0,"Jueves"))
+        repository.insert(Day(0,"Viernes"))
+        repository.insert(Day(0,"Sábado"))
+        repository.insert(Day(0,"Domingo"))
+
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_navigation, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //todo: Por el momento no tengo un toolbar
-        // (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        // (activity as AppCompatActivity).supportActionBar?.apply {
-        //  setHomeButtonEnabled(true)
-        //  setDisplayHomeAsUpEnabled(true)
-        //  setDisplayShowTitleEnabled(false)}
 
         navegador.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
@@ -55,24 +61,24 @@ class MainFragment: PhotoAlarmFragment() {
             }
             R.id.alarm -> {
                 itemSelected = item.itemId
-                navigateTo(AlarmFragment(), false)
+                replaceTo(AlarmFragment(), false)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.timer -> {
                 itemSelected = item.itemId
-                navigateTo(TimerFragment(), false)
+                replaceTo(TimerFragment(), false)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.chronometer -> {
                 itemSelected = item.itemId
-                navigateTo(ChronometerFragment(), false)
+                replaceTo(ChronometerFragment(), false)
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
 
-    private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
+    private fun replaceTo(fragment: Fragment, addToBackstack: Boolean) {
 
         val transaction = childFragmentManager
             .beginTransaction()
