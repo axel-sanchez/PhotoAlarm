@@ -209,6 +209,26 @@ class GenericRepository {
         return items
     }
 
+    fun deleteAlarm(id: Long): Int {
+        val db = dbHelper.writableDatabase
+        // Define 'where' part of query.
+        val selection = "${TableAlarm.Columns.COLUMN_NAME_ID} = ?"
+        // Specify arguments in placeholder order.
+        val selectionArgs = arrayOf(id.toString())
+        // Issue SQL statement.
+        return db.delete(TableAlarm.Columns.TABLE_NAME, selection, selectionArgs)
+    }
+
+    fun deleteDayXAlarm(idAlarm: Long): Int{
+        val db = dbHelper.writableDatabase
+        // Define 'where' part of query.
+        val selection = "${TableDayXAlarm.Columns.COLUMN_NAME_ID_ALARM} = ?"
+        // Specify arguments in placeholder order.
+        val selectionArgs = arrayOf(idAlarm.toString())
+        // Issue SQL statement.
+        return db.delete(TableDayXAlarm.Columns.TABLE_NAME, selection, selectionArgs)
+    }
+
     private fun setWhere(whereColumns: Array<String>?): String? {
         if (whereColumns != null) {
             val result = StringBuilder()

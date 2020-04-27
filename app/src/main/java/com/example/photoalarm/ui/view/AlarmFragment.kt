@@ -11,12 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
-import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.getbase.floatingactionbutton.FloatingActionButton
-import java.sql.Time
+import kotlinx.android.synthetic.main.fragment_alarm.*
 import java.util.*
 
 class AlarmFragment : PhotoAlarmFragment() {
@@ -61,13 +60,14 @@ class AlarmFragment : PhotoAlarmFragment() {
         btnFast = view.findViewById(R.id.btnFast)
 
         btnFast.setOnClickListener {
-            selectTime()
+            btnMenu.collapse()
+            addAlarmFast()
         }
 
         setAdapter(repository.getAlarms(arrayOf(), arrayOf(), null))
     }
 
-    private fun selectTime() {
+    private fun addAlarmFast() {
         val timePickerDialog = TimePickerDialog(
             view!!.context,
             R.style.TimePickerTheme,
@@ -96,6 +96,8 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 (viewAdapter as AlarmAdapter).add(alarm)
 
+                empty_state.visibility = View.GONE
+
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden
             //Al colocar en false se muestra en formato 12 horas y true en formato 24 horas
@@ -120,7 +122,9 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>){
-        viewAdapter = AlarmAdapter(alarms) { vibrate() }
+        if(alarms.isEmpty()) empty_state.visibility = View.VISIBLE
+
+        viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
 
         viewManager = LinearLayoutManager(this.requireContext())
 
@@ -137,8 +141,19 @@ class AlarmFragment : PhotoAlarmFragment() {
         }
     }
 
-    private fun addAlarmFast(){
+    private fun delete(item: Alarm){
+        (viewAdapter as AlarmAdapter).remove(item)
+        showEmptyState()
+        repository.deleteDayXAlarm(item.id)
+        repository.deleteAlarm(item.id)
+    }
 
+    private fun showEmptyState() {
+        if (viewAdapter.itemCount > 0) {
+            empty_state.visibility = View.GONE
+        } else {
+            empty_state.visibility = View.VISIBLE
+        }
     }
 
     private fun vibrate(){

@@ -1,8 +1,11 @@
 package com.example.photoalarm.ui.view.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +22,11 @@ import java.util.*
 
 class AlarmAdapter(
     private val listData: MutableList<Alarm>,
-    //private val eliminar: (Alarm) -> Unit,
+    private val delete: (Alarm) -> Unit,
     private val vibrate: () -> Unit
 ) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>() {
 
-    class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private lateinit var repository: GenericRepository
 
@@ -42,7 +45,7 @@ class AlarmAdapter(
         private val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
         private val minute: Int = calendar.get(Calendar.MINUTE)
 
-        fun bind(alarm: Alarm, vibrate: () -> Unit) {
+        fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
 
             repository = GenericRepository.getInstance(itemView.context)
 
@@ -92,10 +95,7 @@ class AlarmAdapter(
                     switch.visibility = View.GONE
 
                     btnDelete.setOnClickListener {
-                        //onDelete(alarm) por ahora solo internamente
-                        hide.visibility = View.GONE
-                        btnDelete.visibility = View.GONE
-                        switch.visibility = View.VISIBLE
+                        delete(alarm)
                     }
                 } else {
                     hide.visibility = View.GONE
@@ -144,7 +144,7 @@ class AlarmAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
-        holder.bind(listData[position], vibrate)
+        holder.bind(listData[position], vibrate, delete)
     }
 
     override fun getItemCount(): Int {

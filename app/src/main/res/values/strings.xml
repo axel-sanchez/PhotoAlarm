@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PhotoAlarm</string>
     <string name="start_time">00:00:00</string>
+    <string name="txt_empty_state">Aún no hay alarmas creadas</string>
 </resources>
