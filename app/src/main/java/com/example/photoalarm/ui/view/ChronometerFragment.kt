@@ -26,8 +26,9 @@ class ChronometerFragment : PhotoAlarmFragment() {
     var handler = Handler()
 
     var isPlaying = false
-    var seconds = 0
+    var hour = 0
     var minutes = 0
+    var seconds = 0
     var miliSeconds = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +73,7 @@ class ChronometerFragment : PhotoAlarmFragment() {
             miliSeconds = 0
             minutes = 0
             seconds = 0
+            hour = 0
         }
     }
 
@@ -88,9 +90,14 @@ class ChronometerFragment : PhotoAlarmFragment() {
                         seconds++
                         miliSeconds = 0
                     }
-                    if (seconds == 59) {
+                    if (seconds == 60) {
                         minutes++
                         seconds = 0
+                    }
+
+                    if(minutes == 60){
+                        hour++
+                        minutes = 0
                     }
 
                     handler.post {
@@ -113,6 +120,7 @@ class ChronometerFragment : PhotoAlarmFragment() {
                             else minutes.toString()
 
                             time.text = "$mi:$s:$m"
+                            txtHour.text = hour.toString()
                         }.run()
                     }
                 }

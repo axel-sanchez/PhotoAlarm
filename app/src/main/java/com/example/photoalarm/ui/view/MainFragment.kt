@@ -57,6 +57,8 @@ class MainFragment: PhotoAlarmFragment() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.weather -> {
+                itemSelected = item.itemId
+                replaceTo(WeatherFragment(), false)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.alarm -> {

@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/empty_state"
@@ -56,17 +57,17 @@
             android:id="@+id/btnFast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="#353333"
+            app:fab_colorNormal="@color/colorPrimaryDark"
             app:fab_colorPressed="@color/colorBrown"
-            app:fab_icon="@drawable/ic_flash_24dp" />
+            app:fab_icon="@drawable/ic_flash_24dp"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnCommon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/colorPrimaryDark"
             app:fab_icon="@drawable/ic_alarm_24dp"
-            app:fab_colorPressed="@color/colorBrown"
-            app:fab_colorNormal="#353333"/>
+            app:fab_colorPressed="@color/colorBrown"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
