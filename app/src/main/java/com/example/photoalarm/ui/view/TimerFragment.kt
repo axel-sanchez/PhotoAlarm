@@ -40,7 +40,7 @@ class TimerFragment : PhotoAlarmFragment() {
     var isPlaying = false
     var seconds = 0
     var minutes = 0
-    var miliSeconds = 0
+    var miliSeconds = 999
 
     var alert: AlertDialog? = null
 
@@ -48,11 +48,7 @@ class TimerFragment : PhotoAlarmFragment() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_timer, container, false)
     }
@@ -73,6 +69,7 @@ class TimerFragment : PhotoAlarmFragment() {
                 btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
                 stop.visibility = View.VISIBLE
+                seconds--
             }
         }
 
@@ -82,7 +79,7 @@ class TimerFragment : PhotoAlarmFragment() {
             stop.visibility = View.GONE
             btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
-            miliSeconds = 0
+            miliSeconds = 999
             minutes = 0
             seconds = 0
         }
@@ -99,7 +96,7 @@ class TimerFragment : PhotoAlarmFragment() {
     private fun selectTime() {
         val mTimePicker = MyTimePickerDialog(
             context,
-            MyTimePickerDialog.OnTimeSetListener { _, hourOfDay, minute, seconds -> // TODO Auto-generated method stub
+            MyTimePickerDialog.OnTimeSetListener { _, hourOfDay, minute, seconds ->
                 minutes = minute
                 this.seconds = seconds
                 var newTime = ""
@@ -149,8 +146,8 @@ class TimerFragment : PhotoAlarmFragment() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    if (isPlaying) miliSeconds++
-                    if (miliSeconds == 999) {
+                    if (isPlaying) miliSeconds--
+                    if (miliSeconds == 0) {
                         if (seconds == 0) {
                             if (minutes != 0) {
                                 minutes--
@@ -158,15 +155,15 @@ class TimerFragment : PhotoAlarmFragment() {
                             } else {
                                 isPlaying = false
                                 seconds = 0
-                                btnPlayPause.background =
-                                    resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                                btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
                                 stop.visibility = View.GONE
                                 sonarAlarma()
+                                return
                             }
                         } else {
                             seconds--
                         }
-                        miliSeconds = 0
+                        miliSeconds = 999
                     }
 
                     handler.post {
