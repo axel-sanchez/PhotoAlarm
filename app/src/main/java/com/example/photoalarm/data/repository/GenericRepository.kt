@@ -4,17 +4,16 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.example.photoalarm.data.*
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.models.Alarm
-import com.example.photoalarm.data.Database
-import com.example.photoalarm.data.TableAlarm
-import com.example.photoalarm.data.TableDay
-import com.example.photoalarm.data.TableDayXAlarm
+import com.example.photoalarm.data.models.MyWeather
+import java.util.*
 
 class GenericRepository {
 
     private lateinit var dbHelper: Database
-    private lateinit var db: SQLiteDatabase
+    lateinit var db: SQLiteDatabase
 
     companion object {
         //Utilizo el patrón singleton
@@ -42,7 +41,7 @@ class GenericRepository {
             }
             db.insert(TableAlarm.Columns.TABLE_NAME, null, values)
         } catch (e: Exception) {
-            Log.e("INSERT ALERT", e.message)
+            Log.e("INSERT ALERT", e.message!!)
             -1
         }
     }
@@ -55,7 +54,7 @@ class GenericRepository {
             }
             db.insert(TableDay.Columns.TABLE_NAME, null, values)
         } catch (e: Exception) {
-            Log.e("INSERT DAY", e.message)
+            Log.e("INSERT DAY", e.message!!)
             -1
         }
     }
@@ -69,7 +68,20 @@ class GenericRepository {
             }
             db.insert(TableDayXAlarm.Columns.TABLE_NAME, null, values)
         } catch (e: Exception) {
-            Log.e("INSERT DAY X ALARM", e.message)
+            Log.e("INSERT DAY X ALARM", e.message!!)
+            -1
+        }
+    }
+
+    fun insert(weather: MyWeather): Long {
+        return try {
+            val values = ContentValues().apply {
+                put(TableWeather.Columns.COLUMN_NAME_TEMP, weather.temp)
+                put(TableWeather.Columns.COLUMN_NAME_TIME_LAST_REQUEST, weather.timeLastRequest.toString())
+            }
+            db.insert(TableWeather.Columns.TABLE_NAME, null, values)
+        } catch (e: Exception) {
+            Log.e("INSERT WEATHER", e.message!!)
             -1
         }
     }
@@ -92,6 +104,7 @@ class GenericRepository {
 
         return db.update(TableAlarm.Columns.TABLE_NAME, values, selection, selectionArgs)
     }
+    
 
     fun getAlarms(
         whereColumns: Array<String>?,

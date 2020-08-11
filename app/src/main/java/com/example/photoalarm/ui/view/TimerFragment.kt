@@ -1,21 +1,29 @@
 package com.example.photoalarm.ui.view
 
 import android.annotation.SuppressLint
-import android.net.wifi.aware.WifiAwareNetworkInfo
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import com.example.photoalarm.R
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
 import kotlinx.android.synthetic.main.fragment_timer.*
-import java.util.*
 
 class TimerFragment : PhotoAlarmFragment() {
 
@@ -34,15 +42,17 @@ class TimerFragment : PhotoAlarmFragment() {
     var minutes = 0
     var miliSeconds = 0
 
+    var alert: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_timer, container, false)
     }
@@ -94,10 +104,10 @@ class TimerFragment : PhotoAlarmFragment() {
                 this.seconds = seconds
                 var newTime = ""
 
-                newTime += if(minutes<10) "0$minute:"
+                newTime += if (minutes < 10) "0$minute:"
                 else "$minute:"
 
-                newTime += if(this.seconds<10) "0$seconds:"
+                newTime += if (this.seconds < 10) "0$seconds:"
                 else "$seconds:"
 
                 newTime += "00"
@@ -113,11 +123,23 @@ class TimerFragment : PhotoAlarmFragment() {
         mTimePicker.show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun sonarAlarma() {
-        Toast.makeText(context, "Finalizó el tiempo", Toast.LENGTH_SHORT).show()
+        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val r = RingtoneManager.getRingtone(context, notification)
+        r.isLooping = true
+        r.play()
+
+        activity!!.runOnUiThread {
+            Snackbar.make(view!!, "Timer Over", Snackbar.LENGTH_INDEFINITE)
+                .setActionTextColor(Color.RED)
+                .setAction("OK") { r.stop() }
+                .show()
+        }
     }
 
     inner class ThreadTimer : Thread() {
+        @RequiresApi(Build.VERSION_CODES.P)
         @SuppressLint("SetTextI18n")
         override fun run() {
             while (true) {
@@ -136,7 +158,8 @@ class TimerFragment : PhotoAlarmFragment() {
                             } else {
                                 isPlaying = false
                                 seconds = 0
-                                btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                                btnPlayPause.background =
+                                    resources.getDrawable(R.drawable.ic_play_circle_24dp)
                                 stop.visibility = View.GONE
                                 sonarAlarma()
                             }

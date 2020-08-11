@@ -18,16 +18,17 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import com.agrawalsuneet.dotsloader.loaders.ZeeLoader
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Welcome
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.example.photoalarm.ui.view.interfaces.ApiService
-import kotlinx.android.synthetic.main.fragment_weather.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.roundToInt
 
 private const val MY_PERMISSIONS_REQUEST_LOCATION = 5254
 private const val END_POINT = "https://api.openweathermap.org/data/2.5/"
@@ -42,7 +43,9 @@ class WeatherFragment : PhotoAlarmFragment() {
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
-    private lateinit var latLong: TextView
+    private lateinit var txtWeather: TextView
+    private lateinit var txtMetric: TextView
+    private lateinit var zeeLoader: ZeeLoader
 
     override fun onBackPressFragment() = false
 
@@ -58,9 +61,13 @@ class WeatherFragment : PhotoAlarmFragment() {
     }
 
     private fun getWeather(lat: String, lon: String){
-        service.getWeather(lat, lon, apiId).enqueue(object : Callback<Welcome> {
+        service.getWeather(lat, lon, apiId, "metric").enqueue(object : Callback<Welcome> {
             override fun onResponse(call: Call<Welcome>, response: Response<Welcome>) {
                 if (response.isSuccessful) {
+                    zeeLoader.visibility = View.GONE
+                    txtWeather.text = (response.body()!!.main.temp.roundToInt()).toString()
+                    txtWeather.visibility = View.VISIBLE
+                    txtMetric.visibility = View.VISIBLE
                     println("body token: ${response.body()}")
                 } else {
                     println("response token: $response")
@@ -68,9 +75,7 @@ class WeatherFragment : PhotoAlarmFragment() {
             }
 
             override fun onFailure(call: Call<Welcome>, t: Throwable) {
-                t.printStackTrace()
                 println("el error es el siguiente ${t.message}")
-                println("ACA ESTA EL ERROR")
             }
         })
     }
@@ -84,11 +89,12 @@ class WeatherFragment : PhotoAlarmFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        latLong = view.findViewById(R.id.lat_y_long)
+        txtWeather = view.findViewById(R.id.txtWeather)
+        txtMetric = view.findViewById(R.id.txtMetric)
+        zeeLoader = view.findViewById(R.id.zeeLoader)
 
         locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         toggleUpdates()
-
     }
 
     private fun checkLocation(): Boolean {
@@ -103,8 +109,7 @@ class WeatherFragment : PhotoAlarmFragment() {
             .setMessage("Su ubicación esta desactivada.\npor favor active su ubicación usa esta app")
             .setPositiveButton("Configuración de ubicación") { _, _ ->
                 var myIntent: Intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(myIntent)
-            }
+                startActivity(myIntent) }
             .setNegativeButton("Cancelar") { _, _ -> }
         dialog.show()
     }
@@ -138,7 +143,6 @@ class WeatherFragment : PhotoAlarmFragment() {
         override fun onLocationChanged(location: Location) {
             longitude = location.longitude
             latitude = location.latitude
-            latLong.text = "$latitude, $longitude"
             getWeather(latitude.toString(), longitude.toString())
         }
 

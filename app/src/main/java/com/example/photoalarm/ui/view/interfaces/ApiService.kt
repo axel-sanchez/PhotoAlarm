@@ -7,5 +7,5 @@ import retrofit2.http.*
 interface ApiService {
 
     @GET("weather")
-    fun getWeather(@Query("lat") lat: String, @Query("lon") lon: String, @Query("appid") id: String): Call<Welcome>
+    fun getWeather(@Query("lat") lat: String, @Query("lon") lon: String, @Query("appid") id: String, @Query("units") units: String): Call<Welcome>
 }
