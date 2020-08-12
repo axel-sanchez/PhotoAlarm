@@ -96,7 +96,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 (viewAdapter as AlarmAdapter).add(alarm)
 
-                empty_state.visibility = View.GONE
+                empty_state.showView(false)
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden
@@ -122,7 +122,7 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>){
-        if(alarms.isEmpty()) empty_state.visibility = View.VISIBLE
+        if(alarms.isEmpty()) empty_state.showView(true)
 
         viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
 
@@ -150,9 +150,9 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     private fun showEmptyState() {
         if (viewAdapter.itemCount > 0) {
-            empty_state.visibility = View.GONE
+            empty_state.showView(false)
         } else {
-            empty_state.visibility = View.VISIBLE
+            empty_state.showView(true)
         }
     }
 

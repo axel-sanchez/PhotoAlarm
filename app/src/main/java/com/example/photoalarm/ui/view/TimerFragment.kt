@@ -68,7 +68,7 @@ class TimerFragment : PhotoAlarmFragment() {
             } else {
                 btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                stop.visibility = View.VISIBLE
+                stop.showView(true)
                 seconds--
             }
         }
@@ -76,7 +76,7 @@ class TimerFragment : PhotoAlarmFragment() {
         stop.setOnClickListener {
             time.text = resources.getString(R.string.start_time)
             txtHour.text = "0"
-            stop.visibility = View.GONE
+            stop.showView(false)
             btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
             miliSeconds = 999
@@ -156,7 +156,7 @@ class TimerFragment : PhotoAlarmFragment() {
                                 isPlaying = false
                                 seconds = 0
                                 btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-                                stop.visibility = View.GONE
+                                stop.showView(false)
                                 sonarAlarma()
                                 return
                             }

@@ -61,13 +61,13 @@ class ChronometerFragment : PhotoAlarmFragment() {
             } else {
                 btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                stop.visibility = View.VISIBLE
+                stop.showView(true)
             }
         }
 
         stop.setOnClickListener {
             time.text = resources.getString(R.string.start_time)
-            stop.visibility = View.GONE
+            stop.showView(false)
             btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
             miliSeconds = 0

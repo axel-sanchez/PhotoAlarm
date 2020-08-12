@@ -64,10 +64,10 @@ class WeatherFragment : PhotoAlarmFragment() {
         service.getWeather(lat, lon, apiId, "metric").enqueue(object : Callback<Welcome> {
             override fun onResponse(call: Call<Welcome>, response: Response<Welcome>) {
                 if (response.isSuccessful) {
-                    zeeLoader.visibility = View.GONE
+                    zeeLoader.showView(false)
                     txtWeather.text = (response.body()!!.main.temp.roundToInt()).toString()
-                    txtWeather.visibility = View.VISIBLE
-                    txtMetric.visibility = View.VISIBLE
+                    txtWeather.showView(true)
+                    txtMetric.showView(true)
                     println("body token: ${response.body()}")
                 } else {
                     println("response token: $response")
