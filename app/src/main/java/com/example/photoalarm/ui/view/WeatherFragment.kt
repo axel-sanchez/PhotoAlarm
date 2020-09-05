@@ -47,6 +47,19 @@ class WeatherFragment : PhotoAlarmFragment() {
     private lateinit var txtMetric: TextView
     private lateinit var zeeLoader: ZeeLoader
 
+    private val locationListener: LocationListener = object : LocationListener {
+        @SuppressLint("SetTextI18n")
+        override fun onLocationChanged(location: Location) {
+            longitude = location.longitude
+            latitude = location.latitude
+            getWeather(latitude.toString(), longitude.toString())
+        }
+
+        override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
+        override fun onProviderEnabled(s: String) {}
+        override fun onProviderDisabled(s: String) {}
+    }
+
     override fun onBackPressFragment() = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +71,23 @@ class WeatherFragment : PhotoAlarmFragment() {
             .build()
 
         service = retrofit.create(ApiService::class.java)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_weather, container, false)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        txtWeather = view.findViewById(R.id.txtWeather)
+        txtMetric = view.findViewById(R.id.txtMetric)
+        zeeLoader = view.findViewById(R.id.zeeLoader)
+
+        locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        toggleUpdates()
     }
 
     private fun getWeather(lat: String, lon: String){
@@ -78,23 +108,6 @@ class WeatherFragment : PhotoAlarmFragment() {
                 println("el error es el siguiente ${t.message}")
             }
         })
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weather, container, false)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        txtWeather = view.findViewById(R.id.txtWeather)
-        txtMetric = view.findViewById(R.id.txtMetric)
-        zeeLoader = view.findViewById(R.id.zeeLoader)
-
-        locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        toggleUpdates()
     }
 
     private fun checkLocation(): Boolean {
@@ -136,18 +149,5 @@ class WeatherFragment : PhotoAlarmFragment() {
                 10.0f,
                 locationListener)
         }
-    }
-
-    private val locationListener: LocationListener = object : LocationListener {
-        @SuppressLint("SetTextI18n")
-        override fun onLocationChanged(location: Location) {
-            longitude = location.longitude
-            latitude = location.latitude
-            getWeather(latitude.toString(), longitude.toString())
-        }
-
-        override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
-        override fun onProviderEnabled(s: String) {}
-        override fun onProviderDisabled(s: String) {}
     }
 }

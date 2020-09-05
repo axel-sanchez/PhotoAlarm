@@ -1,29 +1,29 @@
 package com.example.photoalarm.ui.view
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.Intent
+import android.app.Notification
+import android.database.Cursor
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import com.example.photoalarm.R
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
 import kotlinx.android.synthetic.main.fragment_timer.*
+
 
 class TimerFragment : PhotoAlarmFragment() {
 
@@ -41,8 +41,6 @@ class TimerFragment : PhotoAlarmFragment() {
     var seconds = 0
     var minutes = 0
     var miliSeconds = 999
-
-    var alert: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

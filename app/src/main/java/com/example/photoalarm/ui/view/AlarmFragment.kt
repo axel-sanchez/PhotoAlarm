@@ -1,15 +1,22 @@
 package com.example.photoalarm.ui.view
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
+import com.example.photoalarm.data.TableDay
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
@@ -18,6 +25,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_alarm.*
 import java.util.*
 
+
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 class AlarmFragment : PhotoAlarmFragment() {
 
     private lateinit var repository: GenericRepository
@@ -34,6 +43,9 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     private lateinit var vibe: Vibrator
 
+    private var alarmMgr: AlarmManager? = null
+    private lateinit var alarmIntent: PendingIntent
+
     override fun onBackPressFragment() = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +59,6 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_alarm, container, false)
     }
 
@@ -85,18 +96,34 @@ class AlarmFragment : PhotoAlarmFragment() {
                 }
 
                 //Muestro la hora con el formato deseado
-                alarm = Alarm(0, "FastAlarm", "$horaFormateada:$minutoFormateado $periodo", "default", mutableListOf(getCurrentDay()),
+                alarm = Alarm(
+                    0,
+                    "FastAlarm",
+                    "$horaFormateada:$minutoFormateado $periodo",
+                    "default",
+                    mutableListOf(getCurrentDay()),
                     isActive = true,
                     requireVibrate = true
                 )
 
                 alarm.id = repository.insert(alarm)
 
-                repository.insert(alarm.id, 1)
+                for (d in alarm.days) {
+                    //Insertamos un dia x alarma
+                    repository.insert(
+                        alarm.id, repository.getDays(
+                            arrayOf(TableDay.Columns.COLUMN_NAME_NAME), arrayOf(
+                                d
+                            ), null
+                        ).first().id.toInt()
+                    )
+                }
 
                 (viewAdapter as AlarmAdapter).add(alarm)
 
                 empty_state.showView(false)
+
+                activateAlarm(hourOfDay, minute)
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden
@@ -108,8 +135,21 @@ class AlarmFragment : PhotoAlarmFragment() {
         timePickerDialog.show()
     }
 
-    private fun getCurrentDay(): String{
-        return when(calendar.get(Calendar.DAY_OF_WEEK)){
+    private fun activateAlarm(hourAlarm: Int, minuteAlarm: Int){
+        val manager = context!!.getSystemService(ALARM_SERVICE) as AlarmManager?
+        val alarmIntent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
+        val interval = 8000
+        manager!!.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            1000,//interval.toLong()
+            pendingIntent
+        )
+    }
+
+    private fun getCurrentDay(): String {
+        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
             Calendar.MONDAY -> "Lunes"
             Calendar.TUESDAY -> "Martes"
             Calendar.WEDNESDAY -> "Miércoles"
@@ -121,8 +161,8 @@ class AlarmFragment : PhotoAlarmFragment() {
         }
     }
 
-    private fun setAdapter(alarms: MutableList<Alarm>){
-        if(alarms.isEmpty()) empty_state.showView(true)
+    private fun setAdapter(alarms: MutableList<Alarm>) {
+        if (alarms.isEmpty()) empty_state.showView(true)
 
         viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
 
@@ -141,7 +181,7 @@ class AlarmFragment : PhotoAlarmFragment() {
         }
     }
 
-    private fun delete(item: Alarm){
+    private fun delete(item: Alarm) {
         (viewAdapter as AlarmAdapter).remove(item)
         showEmptyState()
         repository.deleteDayXAlarm(item.id)
@@ -156,7 +196,7 @@ class AlarmFragment : PhotoAlarmFragment() {
         }
     }
 
-    private fun vibrate(){
-        vibe.vibrate(50)
+    private fun vibrate() {
+        vibe.vibrate(150)
     }
 }

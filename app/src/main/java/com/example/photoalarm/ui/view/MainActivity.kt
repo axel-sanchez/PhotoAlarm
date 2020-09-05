@@ -1,14 +1,17 @@
 package com.example.photoalarm.ui.view
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.photoalarm.R
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.example.photoalarm.ui.view.interfaces.INavigationHost
 
-class MainActivity : AppCompatActivity(), INavigationHost {
+class MainActivity: AppCompatActivity(), INavigationHost {
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

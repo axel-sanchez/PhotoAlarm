@@ -147,9 +147,7 @@ class AlarmAdapter(
         holder.bind(listData[position], vibrate, delete)
     }
 
-    override fun getItemCount(): Int {
-        return listData.size
-    }
+    override fun getItemCount() = listData.size
 
     fun remove(item: Alarm) {
         val position = listData.indexOf(listData.find { x -> x.id == item.id })

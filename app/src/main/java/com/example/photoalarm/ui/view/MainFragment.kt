@@ -1,11 +1,13 @@
 package com.example.photoalarm.ui.view
 
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
@@ -15,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_navigation.*
 
 const val ARG_ITEM = "nombre"
 
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 class MainFragment: PhotoAlarmFragment() {
 
     //Inicializo el repositorio singleton
