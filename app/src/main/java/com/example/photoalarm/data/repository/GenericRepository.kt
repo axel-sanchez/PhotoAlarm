@@ -1,33 +1,20 @@
 package com.example.photoalarm.data.repository
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.example.photoalarm.data.*
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.models.MyWeather
-import java.util.*
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 
-class GenericRepository {
+class GenericRepository: KoinComponent {
 
-    private lateinit var dbHelper: Database
-    lateinit var db: SQLiteDatabase
-
-    companion object {
-        //Utilizo el patrón singleton
-        private var instance: GenericRepository? = null
-
-        fun getInstance(context: Context): GenericRepository {
-            if (instance == null) {
-                instance = GenericRepository()
-                instance!!.dbHelper = Database(context)
-                instance!!.db = instance!!.dbHelper.writableDatabase
-            }
-            return instance!!
-        }
-    }
+    private val dbHelper: Database by inject()
+    var db: SQLiteDatabase = dbHelper.writableDatabase
+    var dbR: SQLiteDatabase = dbHelper.readableDatabase
 
     //Insertamos una alarma
     fun insert(item: Alarm): Long {
@@ -87,8 +74,6 @@ class GenericRepository {
     }
 
     fun update(item: Alarm): Int {
-        val db = dbHelper.writableDatabase
-
         val values = ContentValues().apply {
             put(TableAlarm.Columns.COLUMN_NAME_ID, item.id)
             put(TableAlarm.Columns.COLUMN_NAME_LABEL, item.label)
@@ -104,15 +89,8 @@ class GenericRepository {
 
         return db.update(TableAlarm.Columns.TABLE_NAME, values, selection, selectionArgs)
     }
-    
 
-    fun getAlarms(
-        whereColumns: Array<String>?,
-        whereArgs: Array<String>?,
-        orderByColumn: String?
-    ): MutableList<Alarm> {
-        val db = dbHelper.readableDatabase
-
+    fun getAlarms(whereColumns: Array<String>?, whereArgs: Array<String>?, orderByColumn: String?): MutableList<Alarm> {
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         val projection = arrayOf(
@@ -130,7 +108,7 @@ class GenericRepository {
         // How you want the results sorted in the resulting Cursor
         val sortOrder: String? = if (orderByColumn?.count() != 0) "$orderByColumn DESC" else null
 
-        var cursor = db.query(
+        var cursor = dbR.query(
             TableAlarm.Columns.TABLE_NAME,   // The table to query
             projection,             // The array of columns to return (pass null to get all)
             selection,              // The columns for the WHERE clause
@@ -164,7 +142,7 @@ class GenericRepository {
         var day: String
         var alarm: Alarm
 
-        cursor = db.rawQuery(
+        cursor = dbR.rawQuery(
             "select a.id, d.name from alarm a inner join day_x_alarm dx on a.id = dx.id_alarm inner join day d on d.id = dx.id_day where a.id in ($idsAlarms)",
             null
         )
@@ -180,12 +158,7 @@ class GenericRepository {
         return items
     }
 
-    fun getDays(
-        whereColumns: Array<String>?,
-        whereArgs: Array<String>?,
-        orderByColumn: String?
-    ): List<Day> {
-        val db = dbHelper.readableDatabase
+    fun getDays(whereColumns: Array<String>?, whereArgs: Array<String>?, orderByColumn: String?): List<Day> {
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
@@ -200,7 +173,7 @@ class GenericRepository {
         // How you want the results sorted in the resulting Cursor
         val sortOrder: String? = if (orderByColumn?.count() != 0) "$orderByColumn DESC" else null
 
-        val cursor = db.query(
+        val cursor = dbR.query(
             TableDay.Columns.TABLE_NAME,   // The table to query
             projection,             // The array of columns to return (pass null to get all)
             selection,              // The columns for the WHERE clause
@@ -223,7 +196,6 @@ class GenericRepository {
     }
 
     fun deleteAlarm(id: Long): Int {
-        val db = dbHelper.writableDatabase
         // Define 'where' part of query.
         val selection = "${TableAlarm.Columns.COLUMN_NAME_ID} = ?"
         // Specify arguments in placeholder order.
@@ -233,7 +205,6 @@ class GenericRepository {
     }
 
     fun deleteDayXAlarm(idAlarm: Long): Int{
-        val db = dbHelper.writableDatabase
         // Define 'where' part of query.
         val selection = "${TableDayXAlarm.Columns.COLUMN_NAME_ID_ALARM} = ?"
         // Specify arguments in placeholder order.

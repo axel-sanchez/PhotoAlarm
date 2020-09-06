@@ -22,12 +22,13 @@ import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import org.koin.android.ext.android.inject
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class AlarmFragment : PhotoAlarmFragment() {
 
-    private lateinit var repository: GenericRepository
+    private val repository: GenericRepository by inject()
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
 
@@ -66,8 +67,6 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        repository = GenericRepository.getInstance(context!!)
 
         binding.btnFast.setOnClickListener {
             binding.btnMenu.collapse()

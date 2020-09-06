@@ -13,14 +13,14 @@ import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentNavigationBinding
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import org.koin.android.ext.android.inject
 
 const val ARG_ITEM = "nombre"
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class MainFragment: PhotoAlarmFragment() {
 
-    //Inicializo el repositorio singleton
-    private lateinit var repository: GenericRepository
+    private val repository: GenericRepository by inject()
 
     private val firstItem = R.id.alarm
     private var itemSelected = firstItem
@@ -29,8 +29,6 @@ class MainFragment: PhotoAlarmFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        repository = GenericRepository.getInstance(context!!)
 
         repository.insert(Day(0,"Lunes"))
         repository.insert(Day(0,"Martes"))

@@ -17,18 +17,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.repository.GenericRepository
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import java.util.*
-
 
 class AlarmAdapter(
     private val listData: MutableList<Alarm>,
     private val delete: (Alarm) -> Unit,
-    private val vibrate: () -> Unit
-) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>() {
+    private val vibrate: () -> Unit) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>(), KoinComponent {
 
     inner class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private lateinit var repository: GenericRepository
+        private val repository: GenericRepository by inject()
 
         private var isSelected = false
 
@@ -46,8 +46,6 @@ class AlarmAdapter(
         private val minute: Int = calendar.get(Calendar.MINUTE)
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
-
-            repository = GenericRepository.getInstance(itemView.context)
 
             txtTime.text = alarm.time
 
