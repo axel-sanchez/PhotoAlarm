@@ -68,7 +68,5 @@
             app:fab_colorNormal="@color/colorPrimaryDark"
             app:fab_icon="@drawable/ic_alarm_24dp"
             app:fab_colorPressed="@color/colorBrown"/>
-
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,38 +1,25 @@
 package com.example.photoalarm.ui.view
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.database.Cursor
 import android.graphics.Color
-import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.photoalarm.R
+import com.example.photoalarm.databinding.FragmentTimerBinding
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.google.android.material.snackbar.Snackbar
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
-import kotlinx.android.synthetic.main.fragment_timer.*
-
 
 class TimerFragment : PhotoAlarmFragment() {
 
     override fun onBackPressFragment() = false
-
-    private lateinit var btnPlayPause: ImageButton
-    private lateinit var progress: ProgressBar
-    private lateinit var time: TextView
-    private lateinit var txtHour: TextView
 
     private lateinit var threadPlay: ThreadTimer
     var handler = Handler()
@@ -42,49 +29,52 @@ class TimerFragment : PhotoAlarmFragment() {
     var minutes = 0
     var miliSeconds = 999
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var fragmentTimerBinding: FragmentTimerBinding? = null
+    private val binding get() = fragmentTimerBinding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        fragmentTimerBinding = FragmentTimerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_timer, container, false)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentTimerBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btnPlayPause = view.findViewById(R.id.btnPlayPause)
-        progress = view.findViewById(R.id.progress)
-        time = view.findViewById(R.id.time)
-        txtHour = view.findViewById(R.id.txtHour)
-
-        btnPlayPause.setOnClickListener {
+        binding.btnPlayPause.setOnClickListener {
             if (isPlaying) {
-                btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
                 isPlaying = false
             } else {
-                btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
+                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                stop.showView(true)
+                binding.stop.showView(true)
                 seconds--
             }
         }
 
-        stop.setOnClickListener {
-            time.text = resources.getString(R.string.start_time)
-            txtHour.text = "0"
-            stop.showView(false)
-            btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+        binding.stop.setOnClickListener {
+            binding.time.text = resources.getString(R.string.start_time)
+            binding.txtHour.text = "0"
+            binding.stop.showView(false)
+            binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
             miliSeconds = 999
             minutes = 0
             seconds = 0
         }
 
-        time.setOnClickListener { selectTime() }
-        linearHora.setOnClickListener { selectTime() }
-        progress.setOnClickListener { selectTime() }
+        binding.time.setOnClickListener { selectTime() }
+        binding.linearHora.setOnClickListener { selectTime() }
+        binding.progress.setOnClickListener { selectTime() }
 
         threadPlay = ThreadTimer()
         threadPlay.start()
@@ -107,8 +97,8 @@ class TimerFragment : PhotoAlarmFragment() {
 
                 newTime += "00"
 
-                time.text = newTime
-                txtHour.text = hourOfDay.toString()
+                binding.time.text = newTime
+                binding.txtHour.text = hourOfDay.toString()
             },
             0,
             0,
@@ -153,8 +143,8 @@ class TimerFragment : PhotoAlarmFragment() {
                             } else {
                                 isPlaying = false
                                 seconds = 0
-                                btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-                                stop.showView(false)
+                                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                                binding.stop.showView(false)
                                 sonarAlarma()
                                 return
                             }
@@ -183,7 +173,7 @@ class TimerFragment : PhotoAlarmFragment() {
                             mi = if (minutes < 10) "0$minutes"
                             else minutes.toString()
 
-                            time.text = "$mi:$s:$m"
+                            binding.time.text = "$mi:$s:$m"
                         }.run()
                     }
                 }

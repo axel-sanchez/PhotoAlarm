@@ -6,21 +6,14 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.example.photoalarm.R
+import com.example.photoalarm.databinding.FragmentChronometerBinding
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
-import kotlinx.android.synthetic.main.fragment_chronometer.*
 import java.lang.Exception
 
 class ChronometerFragment : PhotoAlarmFragment() {
 
     override fun onBackPressFragment() = false
-
-    private lateinit var btnPlayPause: ImageButton
-    private lateinit var progress: ProgressBar
-    private lateinit var time: TextView
 
     private lateinit var threadPlay: ThreadChronometer
     var handler = Handler()
@@ -31,44 +24,40 @@ class ChronometerFragment : PhotoAlarmFragment() {
     var seconds = 0
     var miliSeconds = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var fragmentChronometerBinding: FragmentChronometerBinding? = null
+    private val binding get() = fragmentChronometerBinding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        fragmentChronometerBinding = FragmentChronometerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chronometer, container, false)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentChronometerBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btnPlayPause = view.findViewById(R.id.btnPlayPause)
-        progress = view.findViewById(R.id.progress)
-        time = view.findViewById(R.id.time)
-
         threadPlay = ThreadChronometer()
         threadPlay.start()
 
-        btnPlayPause.setOnClickListener {
+        binding.btnPlayPause.setOnClickListener {
             if (isPlaying) {
-                btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
                 isPlaying = false
             } else {
-                btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
+                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                stop.showView(true)
+                binding.stop.showView(true)
             }
         }
 
-        stop.setOnClickListener {
-            time.text = resources.getString(R.string.start_time)
-            stop.showView(false)
-            btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+        binding.stop.setOnClickListener {
+            binding.time.text = resources.getString(R.string.start_time)
+            binding.stop.showView(false)
+            binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
             miliSeconds = 0
             minutes = 0
@@ -119,8 +108,8 @@ class ChronometerFragment : PhotoAlarmFragment() {
                             mi = if(minutes < 10) "0$minutes"
                             else minutes.toString()
 
-                            time.text = "$mi:$s:$m"
-                            txtHour.text = hour.toString()
+                            binding.time.text = "$mi:$s:$m"
+                            binding.txtHour.text = hour.toString()
                         }.run()
                     }
                 }

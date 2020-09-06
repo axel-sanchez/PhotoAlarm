@@ -19,12 +19,10 @@ import com.example.photoalarm.R
 import com.example.photoalarm.data.TableDay
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.repository.GenericRepository
+import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
-import com.getbase.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.fragment_alarm.*
 import java.util.*
-
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class AlarmFragment : PhotoAlarmFragment() {
@@ -32,8 +30,6 @@ class AlarmFragment : PhotoAlarmFragment() {
     private lateinit var repository: GenericRepository
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var rvAlarms: RecyclerView
-    private lateinit var btnFast: FloatingActionButton
 
     private lateinit var calendar: Calendar
     private var hour: Int = 0
@@ -42,9 +38,6 @@ class AlarmFragment : PhotoAlarmFragment() {
     private lateinit var alarm: Alarm
 
     private lateinit var vibe: Vibrator
-
-    private var alarmMgr: AlarmManager? = null
-    private lateinit var alarmIntent: PendingIntent
 
     override fun onBackPressFragment() = false
 
@@ -58,8 +51,17 @@ class AlarmFragment : PhotoAlarmFragment() {
         minute = calendar.get(Calendar.MINUTE)
     }
 
+    private var fragmentAlarmBinding: FragmentAlarmBinding? = null
+    private val binding get() = fragmentAlarmBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_alarm, container, false)
+        fragmentAlarmBinding = FragmentAlarmBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentAlarmBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,11 +69,8 @@ class AlarmFragment : PhotoAlarmFragment() {
 
         repository = GenericRepository.getInstance(context!!)
 
-        rvAlarms = view.findViewById(R.id.rvAlarms)
-        btnFast = view.findViewById(R.id.btnFast)
-
-        btnFast.setOnClickListener {
-            btnMenu.collapse()
+        binding.btnFast.setOnClickListener {
+            binding.btnMenu.collapse()
             addAlarmFast()
         }
 
@@ -121,7 +120,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 (viewAdapter as AlarmAdapter).add(alarm)
 
-                empty_state.showView(false)
+                binding.emptyState.showView(false)
 
                 activateAlarm(hourOfDay, minute)
 
@@ -162,13 +161,13 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>) {
-        if (alarms.isEmpty()) empty_state.showView(true)
+        if (alarms.isEmpty()) binding.emptyState.showView(true)
 
         viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
 
         viewManager = LinearLayoutManager(this.requireContext())
 
-        rvAlarms.apply {
+        binding.rvAlarms.apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
@@ -190,9 +189,9 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     private fun showEmptyState() {
         if (viewAdapter.itemCount > 0) {
-            empty_state.showView(false)
+            binding.emptyState.showView(false)
         } else {
-            empty_state.showView(true)
+            binding.emptyState.showView(true)
         }
     }
 

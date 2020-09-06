@@ -11,9 +11,8 @@ import androidx.annotation.RequiresApi
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
+import com.example.photoalarm.databinding.FragmentNavigationBinding
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
-import com.example.photoalarm.ui.view.interfaces.INavigationHost
-import kotlinx.android.synthetic.main.fragment_navigation.*
 
 const val ARG_ITEM = "nombre"
 
@@ -43,15 +42,22 @@ class MainFragment: PhotoAlarmFragment() {
 
     }
 
+    private var fragmentNavigationBinding: FragmentNavigationBinding? = null
+    private val binding get() = fragmentNavigationBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_navigation, container, false)
+        fragmentNavigationBinding = FragmentNavigationBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentNavigationBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        navegador.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        binding.navegador.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -98,6 +104,6 @@ class MainFragment: PhotoAlarmFragment() {
 
     override fun onResume() {
         super.onResume()
-        navegador.selectedItemId = itemSelected
+        binding.navegador.selectedItemId = itemSelected
     }
 }

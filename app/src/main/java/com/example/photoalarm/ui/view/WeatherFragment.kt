@@ -14,13 +14,11 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import com.agrawalsuneet.dotsloader.loaders.ZeeLoader
-import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Welcome
+import com.example.photoalarm.databinding.FragmentWeatherBinding
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
 import com.example.photoalarm.ui.view.interfaces.ApiService
 import retrofit2.Call
@@ -42,10 +40,6 @@ class WeatherFragment : PhotoAlarmFragment() {
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-
-    private lateinit var txtWeather: TextView
-    private lateinit var txtMetric: TextView
-    private lateinit var zeeLoader: ZeeLoader
 
     private val locationListener: LocationListener = object : LocationListener {
         @SuppressLint("SetTextI18n")
@@ -73,18 +67,22 @@ class WeatherFragment : PhotoAlarmFragment() {
         service = retrofit.create(ApiService::class.java)
     }
 
+    private var fragmentWeatherBinding: FragmentWeatherBinding? = null
+    private val binding get() = fragmentWeatherBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weather, container, false)
+        fragmentWeatherBinding = FragmentWeatherBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentWeatherBinding = null
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        txtWeather = view.findViewById(R.id.txtWeather)
-        txtMetric = view.findViewById(R.id.txtMetric)
-        zeeLoader = view.findViewById(R.id.zeeLoader)
 
         locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         toggleUpdates()
@@ -94,10 +92,10 @@ class WeatherFragment : PhotoAlarmFragment() {
         service.getWeather(lat, lon, apiId, "metric").enqueue(object : Callback<Welcome> {
             override fun onResponse(call: Call<Welcome>, response: Response<Welcome>) {
                 if (response.isSuccessful) {
-                    zeeLoader.showView(false)
-                    txtWeather.text = (response.body()!!.main.temp.roundToInt()).toString()
-                    txtWeather.showView(true)
-                    txtMetric.showView(true)
+                    binding.zeeLoader.showView(false)
+                    binding.txtWeather.text = (response.body()!!.main.temp.roundToInt()).toString()
+                    binding.txtWeather.showView(true)
+                    binding.txtMetric.showView(true)
                     println("body token: ${response.body()}")
                 } else {
                     println("response token: $response")
