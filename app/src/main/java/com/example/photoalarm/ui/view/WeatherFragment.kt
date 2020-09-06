@@ -17,25 +17,24 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import com.example.photoalarm.data.models.Welcome
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.example.photoalarm.data.models.Result
 import com.example.photoalarm.databinding.FragmentWeatherBinding
+import com.example.photoalarm.domain.WeatherUseCase
 import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
-import com.example.photoalarm.ui.view.interfaces.ApiService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.photoalarm.viewmodel.WeatherViewModel
+import com.example.photoalarm.viewmodel.WeatherViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 private const val MY_PERMISSIONS_REQUEST_LOCATION = 5254
-private const val END_POINT = "https://api.openweathermap.org/data/2.5/"
 
 class WeatherFragment : PhotoAlarmFragment() {
 
-    private val apiId = "3cfc1d5c1a8a4e9709fd07398c77d1af"
-
-    private lateinit var service: ApiService
+    private val viewModel: WeatherViewModel by lazy { ViewModelProviders.of(requireActivity(), WeatherViewModelFactory(WeatherUseCase())).get(WeatherViewModel::class.java) }
 
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 0.0
@@ -46,7 +45,10 @@ class WeatherFragment : PhotoAlarmFragment() {
         override fun onLocationChanged(location: Location) {
             longitude = location.longitude
             latitude = location.latitude
-            getWeather(latitude.toString(), longitude.toString())
+
+            CoroutineScope(Main).launch {
+                viewModel.getWeather(latitude.toString(), longitude.toString())
+            }
         }
 
         override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
@@ -55,17 +57,6 @@ class WeatherFragment : PhotoAlarmFragment() {
     }
 
     override fun onBackPressFragment() = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(END_POINT)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        service = retrofit.create(ApiService::class.java)
-    }
 
     private var fragmentWeatherBinding: FragmentWeatherBinding? = null
     private val binding get() = fragmentWeatherBinding!!
@@ -86,26 +77,19 @@ class WeatherFragment : PhotoAlarmFragment() {
 
         locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         toggleUpdates()
+
+        setupViewModelAndObserve()
     }
 
-    private fun getWeather(lat: String, lon: String){
-        service.getWeather(lat, lon, apiId, "metric").enqueue(object : Callback<Welcome> {
-            override fun onResponse(call: Call<Welcome>, response: Response<Welcome>) {
-                if (response.isSuccessful) {
-                    binding.zeeLoader.showView(false)
-                    binding.txtWeather.text = (response.body()!!.main.temp.roundToInt()).toString()
-                    binding.txtWeather.showView(true)
-                    binding.txtMetric.showView(true)
-                    println("body token: ${response.body()}")
-                } else {
-                    println("response token: $response")
-                }
-            }
+    private fun setupViewModelAndObserve(){
+        val observer = Observer<Result?> {
+            binding.zeeLoader.showView(false)
+            binding.txtWeather.text = it?.let{ it.main }?.let { main -> main.temp }?.let { temp -> temp.roundToInt().toString() }?: kotlin.run { "" }
+            binding.txtWeather.showView(true)
+            binding.txtMetric.showView(true)
+        }
 
-            override fun onFailure(call: Call<Welcome>, t: Throwable) {
-                println("el error es el siguiente ${t.message}")
-            }
-        })
+        viewModel.getWeatherLiveData().observe(viewLifecycleOwner, observer)
     }
 
     private fun checkLocation(): Boolean {

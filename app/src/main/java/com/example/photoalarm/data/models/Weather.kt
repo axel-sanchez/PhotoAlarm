@@ -9,7 +9,7 @@ val mapper = jacksonObjectMapper().apply {
     setSerializationInclusion(JsonInclude.Include.NON_NULL)
 }
 
-data class Welcome (
+data class Result (
     @get:JsonProperty(required=true)@field:JsonProperty(required=true)
     val coord: Coord,
 
@@ -52,7 +52,7 @@ data class Welcome (
     fun toJson() = mapper.writeValueAsString(this)
 
     companion object {
-        fun fromJson(json: String) = mapper.readValue<Welcome>(json)
+        fun fromJson(json: String) = mapper.readValue<Result>(json)
     }
 }
 
