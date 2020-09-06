@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.helpers
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.example.photoalarm.ui.AlarmActivity
 
 
 @RequiresApi(Build.VERSION_CODES.P)

@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -20,8 +20,9 @@ import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentAlarmBinding
-import com.example.photoalarm.ui.view.adapter.AlarmAdapter
-import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.example.photoalarm.helpers.AlarmReceiver
+import com.example.photoalarm.ui.adapter.AlarmAdapter
+import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import org.koin.android.ext.android.inject
 import java.util.*
 

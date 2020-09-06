@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view.adapter
+package com.example.photoalarm.ui.adapter
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm

@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.photoalarm.data.models.Result
 import com.example.photoalarm.databinding.FragmentWeatherBinding
 import com.example.photoalarm.domain.WeatherUseCase
-import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import com.example.photoalarm.viewmodel.WeatherViewModel
 import com.example.photoalarm.viewmodel.WeatherViewModelFactory
 import kotlinx.coroutines.CoroutineScope

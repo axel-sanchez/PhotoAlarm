@@ -1,7 +1,7 @@
-package com.example.photoalarm.ui.view.customs
+package com.example.photoalarm.ui.customs
 
 import android.view.View
-import com.example.photoalarm.ui.view.interfaces.IOnBackPressFragment
+import com.example.photoalarm.ui.interfaces.IOnBackPressFragment
 
 abstract class PhotoAlarmFragment : androidx.fragment.app.Fragment() , IOnBackPressFragment{
     //EXTENSION FUNCTIONS

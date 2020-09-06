@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.app.AlarmManager
 import android.app.PendingIntent

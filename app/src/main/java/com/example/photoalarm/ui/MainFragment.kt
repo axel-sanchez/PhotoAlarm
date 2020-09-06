@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import com.example.photoalarm.R
 import com.example.photoalarm.databinding.FragmentNavigationBinding
-import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class MainFragment: PhotoAlarmFragment() {

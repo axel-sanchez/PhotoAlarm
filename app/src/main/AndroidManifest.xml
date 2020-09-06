@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="n">
-        <activity android:name=".ui.view.MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,8 +31,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.view.AlarmReceiver" android:enabled="true"/>
+        <receiver android:name=".helpers.AlarmReceiver" android:enabled="true"/>
 
-        <activity android:name=".ui.view.AlarmActivity" />
+        <activity android:name=".ui.AlarmActivity" />
     </application>
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.photoalarm.R
 import com.example.photoalarm.databinding.FragmentChronometerBinding
-import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import java.lang.Exception
 
 class ChronometerFragment : PhotoAlarmFragment() {

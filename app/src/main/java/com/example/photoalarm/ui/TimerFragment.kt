@@ -1,4 +1,4 @@
-package com.example.photoalarm.ui.view
+package com.example.photoalarm.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import com.example.photoalarm.R
 import com.example.photoalarm.databinding.FragmentTimerBinding
-import com.example.photoalarm.ui.view.customs.PhotoAlarmFragment
+import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import com.google.android.material.snackbar.Snackbar
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
 
