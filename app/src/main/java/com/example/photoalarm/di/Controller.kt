@@ -1,14 +1,19 @@
 package com.example.photoalarm.di
 
+import android.app.AlarmManager
+import android.content.Context
+import com.example.photoalarm.MyApplication
 import com.example.photoalarm.data.Database
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.data.service.ApiService
 import com.example.photoalarm.data.service.ConnectToApi
+import com.example.photoalarm.helpers.AlarmHelper
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 private const val END_POINT = "https://api.openweathermap.org/data/2.5/"
 val moduleApp = module {
@@ -34,4 +39,7 @@ val moduleApp = module {
             Day(7, "Domingo")
         )
     }
+    single { AlarmHelper() }
+    single { Calendar.getInstance() }
+    single { androidContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
 }

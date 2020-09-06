@@ -12,11 +12,11 @@ import org.koin.standalone.inject
 
 class GenericRepository: KoinComponent {
 
-    val dias: List<Day> by inject()
+    private val dias: List<Day> by inject()
 
     private val dbHelper: Database by inject()
-    var db: SQLiteDatabase = dbHelper.writableDatabase
-    var dbR: SQLiteDatabase = dbHelper.readableDatabase
+    private var db: SQLiteDatabase = dbHelper.writableDatabase
+    private var dbR: SQLiteDatabase = dbHelper.readableDatabase
 
     //Insertamos una alarma
     fun insert(item: Alarm): Long {

@@ -1,11 +1,7 @@
 package com.example.photoalarm.ui
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
@@ -20,7 +16,7 @@ import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentAlarmBinding
-import com.example.photoalarm.helpers.AlarmReceiver
+import com.example.photoalarm.helpers.AlarmHelper
 import com.example.photoalarm.ui.adapter.AlarmAdapter
 import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import org.koin.android.ext.android.inject
@@ -30,12 +26,13 @@ import java.util.*
 class AlarmFragment : PhotoAlarmFragment() {
 
     private val days: List<Day> by inject()
+    private val alarmHelper: AlarmHelper by inject()
 
     private val repository: GenericRepository by inject()
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
 
-    private lateinit var calendar: Calendar
+    private val calendar: Calendar by inject()
     private var hour: Int = 0
     private var minute: Int = 0
 
@@ -50,7 +47,6 @@ class AlarmFragment : PhotoAlarmFragment() {
 
         vibe = context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-        calendar = Calendar.getInstance()
         hour = calendar.get(Calendar.HOUR_OF_DAY)
         minute = calendar.get(Calendar.MINUTE)
     }
@@ -102,7 +98,7 @@ class AlarmFragment : PhotoAlarmFragment() {
                     "FastAlarm",
                     "$horaFormateada:$minutoFormateado $periodo",
                     "default",
-                    mutableListOf(getCurrentDay()),
+                    mutableListOf(alarmHelper.getCurrentDay()),
                     isActive = true,
                     requireVibrate = true
                 )
@@ -124,7 +120,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 binding.emptyState.showView(false)
 
-                activateAlarm(hourOfDay, minute)
+                alarmHelper.activateAlarm(hourOfDay, minute)
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden
@@ -134,37 +130,6 @@ class AlarmFragment : PhotoAlarmFragment() {
         )
         timePickerDialog.window!!.setBackgroundDrawable(view!!.resources.getDrawable(R.drawable.corners_qk))
         timePickerDialog.show()
-    }
-
-    private fun activateAlarm(hourAlarm: Int, minuteAlarm: Int){
-        val manager = context?.getSystemService(ALARM_SERVICE) as AlarmManager?
-        val alarmIntent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-        val innerCalendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, hourAlarm)
-            set(Calendar.MINUTE, minuteAlarm)
-        }
-        manager?.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            //System.currentTimeMillis(),
-            innerCalendar.timeInMillis,
-            1000 * 60 * 10,
-            pendingIntent
-        )
-    }
-
-    private fun getCurrentDay(): String {
-        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
-            Calendar.MONDAY -> "Lunes"
-            Calendar.TUESDAY -> "Martes"
-            Calendar.WEDNESDAY -> "Miércoles"
-            Calendar.THURSDAY -> "Jueves"
-            Calendar.FRIDAY -> "Viernes"
-            Calendar.SATURDAY -> "Sábado"
-            Calendar.SUNDAY -> "Domingo"
-            else -> "Lunes"
-        }
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>) {
