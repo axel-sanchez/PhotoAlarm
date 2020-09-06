@@ -16,8 +16,8 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
-import com.example.photoalarm.data.TableDay
 import com.example.photoalarm.data.models.Alarm
+import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.ui.view.adapter.AlarmAdapter
@@ -27,6 +27,8 @@ import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class AlarmFragment : PhotoAlarmFragment() {
+
+    private val days: List<Day> by inject()
 
     private val repository: GenericRepository by inject()
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -106,15 +108,15 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 alarm.id = repository.insert(alarm)
 
-                for (d in alarm.days) {
-                    //Insertamos un dia x alarma
-                    repository.insert(
-                        alarm.id, repository.getDays(
-                            arrayOf(TableDay.Columns.COLUMN_NAME_NAME), arrayOf(
-                                d
-                            ), null
-                        ).first().id.toInt()
-                    )
+                for (day in alarm.days) {
+                    var idDay = days.find { dia -> dia.name == day }?.id?.toInt()?: kotlin.run { null }
+                    idDay?.let {
+                        //Insertamos un dia x alarma
+                        repository.insert(
+                            alarm.id,
+                            it
+                        )
+                    }
                 }
 
                 (viewAdapter as AlarmAdapter).add(alarm)

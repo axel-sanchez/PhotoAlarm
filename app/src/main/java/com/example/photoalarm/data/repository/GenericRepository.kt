@@ -12,6 +12,8 @@ import org.koin.standalone.inject
 
 class GenericRepository: KoinComponent {
 
+    val dias: List<Day> by inject()
+
     private val dbHelper: Database by inject()
     var db: SQLiteDatabase = dbHelper.writableDatabase
     var dbR: SQLiteDatabase = dbHelper.readableDatabase
@@ -29,19 +31,6 @@ class GenericRepository: KoinComponent {
             db.insert(TableAlarm.Columns.TABLE_NAME, null, values)
         } catch (e: Exception) {
             Log.e("INSERT ALERT", e.message!!)
-            -1
-        }
-    }
-
-    //Insertamos un dia
-    fun insert(item: Day): Long {
-        return try {
-            val values = ContentValues().apply {
-                put(TableDay.Columns.COLUMN_NAME_NAME, item.name)
-            }
-            db.insert(TableDay.Columns.TABLE_NAME, null, values)
-        } catch (e: Exception) {
-            Log.e("INSERT DAY", e.message!!)
             -1
         }
     }
@@ -139,59 +128,22 @@ class GenericRepository: KoinComponent {
         if(idsAlarms.isNotEmpty()) idsAlarms = idsAlarms.substring(0, idsAlarms.lastIndex)
 
         var idAlarm: Long
-        var day: String
+        var idDay: Int
         var alarm: Alarm
 
         cursor = dbR.rawQuery(
-            "select a.id, d.name from alarm a inner join day_x_alarm dx on a.id = dx.id_alarm inner join day d on d.id = dx.id_day where a.id in ($idsAlarms)",
+            "select alarm.id, day_x_alarm.id_day from alarm inner join day_x_alarm on alarm.id = day_x_alarm.id_alarm  where alarm.id in ($idsAlarms)",
             null
         )
 
         while (cursor.moveToNext()) {
             idAlarm = cursor.getLong(cursor.getColumnIndex(TableAlarm.Columns.COLUMN_NAME_ID))
-            day = cursor.getString(cursor.getColumnIndex(TableDay.Columns.COLUMN_NAME_NAME))
+            idDay = cursor.getInt(cursor.getColumnIndex(TableDayXAlarm.Columns.COLUMN_NAME_ID_DAY))
 
             alarm = items.first { a -> a.id == idAlarm }
-            alarm.days.add(day)
+            alarm.days.add(dias.find { it.id == idDay.toLong() }?.name?: kotlin.run { "" })
         }
 
-        return items
-    }
-
-    fun getDays(whereColumns: Array<String>?, whereArgs: Array<String>?, orderByColumn: String?): List<Day> {
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        val projection = arrayOf(
-            TableDay.Columns.COLUMN_NAME_ID,
-            TableDay.Columns.COLUMN_NAME_NAME
-        )
-
-        // Filter results WHERE "title" = 'My Title'
-        val selection = setWhere(whereColumns)
-
-        // How you want the results sorted in the resulting Cursor
-        val sortOrder: String? = if (orderByColumn?.count() != 0) "$orderByColumn DESC" else null
-
-        val cursor = dbR.query(
-            TableDay.Columns.TABLE_NAME,   // The table to query
-            projection,             // The array of columns to return (pass null to get all)
-            selection,              // The columns for the WHERE clause
-            whereArgs,          // The values for the WHERE clause
-            null,                   // don't group the rows
-            null,                   // don't filter by row groups
-            sortOrder               // The sort order
-        )
-
-        val items = mutableListOf<Day>()
-        while (cursor.moveToNext()) {
-            items.add(
-                Day(
-                    cursor.getLong(cursor.getColumnIndex(TableDay.Columns.COLUMN_NAME_ID)),
-                    cursor.getString(cursor.getColumnIndex(TableDay.Columns.COLUMN_NAME_NAME))
-                )
-            )
-        }
         return items
     }
 

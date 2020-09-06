@@ -16,7 +16,6 @@ class Database(context: Context): SQLiteOpenHelper(context.applicationContext, D
     override fun onCreate(db: SQLiteDatabase?) {
         //Create Table
         db!!.execSQL(SQL_CREATE_ALARM)
-        db.execSQL(SQL_CREATE_DAY)
         db.execSQL(SQL_CREATE_DAY_X_ALARM)
         db.execSQL(SQL_CREATE_WEATHER)
     }
@@ -24,7 +23,6 @@ class Database(context: Context): SQLiteOpenHelper(context.applicationContext, D
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         //delete table
         db!!.execSQL(SQL_DELETE_ALARM)
-        db.execSQL(SQL_DELETE_DAY)
         db.execSQL(SQL_DELETE_DAY_X_ALARM)
         db.execSQL(SQL_DELETE_WEATHER)
         //create table
@@ -42,11 +40,6 @@ private const val  SQL_CREATE_ALARM =
             "${TableAlarm.Columns.COLUMN_NAME_IS_ACTIVE} BOOL," +
             "${TableAlarm.Columns.COLUMN_NAME_REQUIRE_VIBRATE} BOOL)"
 
-private const val  SQL_CREATE_DAY =
-    "CREATE TABLE ${TableDay.Columns.TABLE_NAME} (" +
-            "${TableDay.Columns.COLUMN_NAME_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "${TableDay.Columns.COLUMN_NAME_NAME} TEXT)"
-
 private const val  SQL_CREATE_DAY_X_ALARM =
     "CREATE TABLE ${TableDayXAlarm.Columns.TABLE_NAME} (" +
             "${TableDayXAlarm.Columns.COLUMN_NAME_ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -61,7 +54,6 @@ private const val  SQL_CREATE_WEATHER =
 
 //DELETE
 private const val SQL_DELETE_ALARM          = "DROP TABLE IF EXISTS ${TableAlarm.Columns.TABLE_NAME}"
-private const val SQL_DELETE_DAY            = "DROP TABLE IF EXISTS ${TableDay.Columns.TABLE_NAME}"
 private const val SQL_DELETE_DAY_X_ALARM    = "DROP TABLE IF EXISTS ${TableDayXAlarm.Columns.TABLE_NAME}"
 private const val SQL_DELETE_WEATHER        = "DROP TABLE IF EXISTS ${TableWeather.Columns.TABLE_NAME}"
 
@@ -76,15 +68,6 @@ object TableAlarm{
         const val COLUMN_NAME_SONG                 =    "song"
         const val COLUMN_NAME_IS_ACTIVE            =    "is_active"
         const val COLUMN_NAME_REQUIRE_VIBRATE      =    "require_vibrate"
-    }
-}
-
-object TableDay{
-    // Table contents are grouped together in an anonymous object.
-    object Columns : BaseColumns {
-        const val TABLE_NAME          =    "day"
-        const val COLUMN_NAME_ID      =    "id"
-        const val COLUMN_NAME_NAME    =    "name"
     }
 }
 

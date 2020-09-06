@@ -1,6 +1,7 @@
 package com.example.photoalarm.di
 
 import com.example.photoalarm.data.Database
+import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.data.service.ApiService
 import com.example.photoalarm.data.service.ConnectToApi
@@ -15,9 +16,22 @@ val moduleApp = module {
     single { GenericRepository() }
     single {
         Retrofit.Builder()
-        .baseUrl(END_POINT)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build() }
+            .baseUrl(END_POINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
     single { (get() as Retrofit).create(ApiService::class.java) }
     single { ConnectToApi() }
+
+    single {
+        listOf(
+            Day(1, "Lunes"),
+            Day(2, "Martes"),
+            Day(3, "Miércoles"),
+            Day(4, "Jueves"),
+            Day(5, "Viernes"),
+            Day(6, "Sábado"),
+            Day(7, "Domingo")
+        )
+    }
 }
