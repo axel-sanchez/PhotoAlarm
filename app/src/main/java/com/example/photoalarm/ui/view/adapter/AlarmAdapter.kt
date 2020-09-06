@@ -1,18 +1,18 @@
 package com.example.photoalarm.ui.view.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
@@ -21,10 +21,12 @@ import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 class AlarmAdapter(
     private val listData: MutableList<Alarm>,
     private val delete: (Alarm) -> Unit,
-    private val vibrate: () -> Unit) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>(), KoinComponent {
+    private val vibrate: () -> Unit
+) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>(), KoinComponent {
 
     inner class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -37,15 +39,29 @@ class AlarmAdapter(
         private var txtTime: TextView = itemView.findViewById(R.id.txtTime)
         private var txtDays: TextView = itemView.findViewById(R.id.txtDays)
         private var hide: View = itemView.findViewById(R.id.hide)
+        private var cardView: CardView = itemView.findViewById(R.id.cardView)
+        private var expandableView: LinearLayout = itemView.findViewById(R.id.expandableView)
+        private var colapsar: ImageView = itemView.findViewById(R.id.colapsar)
 
-        //Calendario para obtener fecha & hora
         private val calendar: Calendar = Calendar.getInstance()
 
-        //Variables para obtener la hora hora
         private val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
         private val minute: Int = calendar.get(Calendar.MINUTE)
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
+
+            colapsar.setOnClickListener {
+                if(expandableView.isShown) {
+                    TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+                    expandableView.visibility = View.GONE
+                    colapsar.setBackgroundResource(R.drawable.ic_expand)
+                }
+                else {
+                    TransitionManager.beginDelayedTransition(cardView)
+                    expandableView.visibility = View.VISIBLE
+                    colapsar.setBackgroundResource(R.drawable.ic_collapsed)
+                }
+            }
 
             txtTime.text = alarm.time
 
@@ -138,7 +154,13 @@ class AlarmAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
-        return ViewHolderData(LayoutInflater.from(parent.context).inflate(R.layout.item_alarm, null, false))
+        return ViewHolderData(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_alarm,
+                null,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolderData, position: Int) {

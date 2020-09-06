@@ -7,9 +7,9 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/carta"
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/colorBrown"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
@@ -25,7 +25,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:id="@+id/txtTime"
@@ -45,13 +46,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="23sp"
-                android:text="Every Day"
+                android:text="@string/every_day"
                 android:textColor="@android:color/white"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/txtTime"/>
 
             <CheckBox
                 android:visibility="gone"
@@ -85,6 +86,39 @@
                 android:layout_marginEnd="16dp"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="16dp"/>
+
+            <LinearLayout
+                android:id="@+id/expandableView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtDays"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hola esta es una descripción"
+                    android:layout_marginBottom="10dp"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_confirm"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/colapsar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/expandableView"
+                android:background="@drawable/ic_expand"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

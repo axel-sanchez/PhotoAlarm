@@ -4,5 +4,6 @@
     <string name="txt_empty_state">Aún no hay alarmas creadas</string>
     <string name="timer">Temporizador</string>
     <string name="chronometer">Cronómetro</string>
+    <string name="every_day">Every Day</string>
 
 </resources>
