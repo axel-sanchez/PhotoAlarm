@@ -135,14 +135,19 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     private fun activateAlarm(hourAlarm: Int, minuteAlarm: Int){
-        val manager = context!!.getSystemService(ALARM_SERVICE) as AlarmManager?
+        val manager = context?.getSystemService(ALARM_SERVICE) as AlarmManager?
         val alarmIntent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-        val interval = 8000
-        manager!!.setInexactRepeating(
+        val innerCalendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hourAlarm)
+            set(Calendar.MINUTE, minuteAlarm)
+        }
+        manager?.setRepeating(
             AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis(),
-            1000,//interval.toLong()
+            //System.currentTimeMillis(),
+            innerCalendar.timeInMillis,
+            1000 * 60 * 10,
             pendingIntent
         )
     }

@@ -12,8 +12,8 @@ import androidx.annotation.RequiresApi
 class AlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Toast.makeText(context, "Sonó la alarma", Toast.LENGTH_SHORT).show()
-        val activityIntent = Intent(context, AlarmActivity::class.java)
-        activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
-        context!!.startActivity(activityIntent)
+        val intent = Intent(context, AlarmActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context!!.startActivity(intent)
     }
 }
