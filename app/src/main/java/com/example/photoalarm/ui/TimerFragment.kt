@@ -32,11 +32,7 @@ class TimerFragment : PhotoAlarmFragment() {
     private var fragmentTimerBinding: FragmentTimerBinding? = null
     private val binding get() = fragmentTimerBinding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         fragmentTimerBinding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
     }

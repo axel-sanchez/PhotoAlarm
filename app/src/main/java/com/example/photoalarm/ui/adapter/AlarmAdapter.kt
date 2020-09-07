@@ -16,31 +16,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.repository.GenericRepository
+import com.example.photoalarm.databinding.ItemAlarmBinding
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+@RequiresApi(Build.VERSION_CODES.M)
 class AlarmAdapter(
     private val listData: MutableList<Alarm>,
     private val delete: (Alarm) -> Unit,
-    private val vibrate: () -> Unit
-) : RecyclerView.Adapter<AlarmAdapter.ViewHolderData>(), KoinComponent {
+    private val vibrate: () -> Unit) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), KoinComponent {
 
-    inner class ViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(private val binding: ItemAlarmBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         private val repository: GenericRepository by inject()
 
         private var isSelected = false
-
-        private var btnDelete: Button = itemView.findViewById(R.id.btnDelete)
-        private var switch: Switch = itemView.findViewById(R.id.swActivate)
-        private var txtTime: TextView = itemView.findViewById(R.id.txtTime)
-        private var txtDays: TextView = itemView.findViewById(R.id.txtDays)
-        private var hide: View = itemView.findViewById(R.id.hide)
-        private var cardView: CardView = itemView.findViewById(R.id.cardView)
-        private var expandableView: LinearLayout = itemView.findViewById(R.id.expandableView)
-        private var colapsar: ImageView = itemView.findViewById(R.id.colapsar)
 
         private val calendar: Calendar = Calendar.getInstance()
 
@@ -49,36 +41,35 @@ class AlarmAdapter(
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
 
-            colapsar.setOnClickListener {
-                if(expandableView.isShown) {
-                    TransitionManager.beginDelayedTransition(cardView, AutoTransition())
-                    expandableView.visibility = View.GONE
-                    colapsar.setBackgroundResource(R.drawable.ic_expand)
-                }
-                else {
-                    TransitionManager.beginDelayedTransition(cardView)
-                    expandableView.visibility = View.VISIBLE
-                    colapsar.setBackgroundResource(R.drawable.ic_collapsed)
+            binding.colapsar.setOnClickListener {
+                if (binding.expandableView.isShown) {
+                    TransitionManager.endTransitions(binding.cardView)
+                    binding.expandableView.visibility = View.GONE
+                    binding.colapsar.setBackgroundResource(R.drawable.ic_expand)
+                } else {
+                    TransitionManager.beginDelayedTransition(binding.cardView)
+                    binding.expandableView.visibility = View.VISIBLE
+                    binding.colapsar.setBackgroundResource(R.drawable.ic_collapsed)
                 }
             }
 
-            txtTime.text = alarm.time
+            binding.txtTime.text = alarm.time
 
             var stringDays = ""
 
-            for (day in alarm.days){
+            for (day in alarm.days) {
                 stringDays += day
             }
 
-            txtDays.text = stringDays
+            binding.txtDays.text = stringDays
 
-            if(alarm.isActive) switch.isChecked = true
+            if (alarm.isActive) binding.swActivate.isChecked = true
 
-            switch.setOnClickListener {
-                if(switch.isChecked){
+            binding.swActivate.setOnClickListener {
+                if (binding.swActivate.isChecked) {
                     alarm.isActive = true
                     repository.update(alarm)
-                } else{
+                } else {
                     alarm.isActive = false
                     repository.update(alarm)
                 }
@@ -86,9 +77,9 @@ class AlarmAdapter(
 
             itemView.setOnClickListener {
                 if (isSelected) {
-                    hide.visibility = View.GONE
-                    btnDelete.visibility = View.GONE
-                    switch.visibility = View.VISIBLE
+                    binding.hide.visibility = View.GONE
+                    binding.btnDelete.visibility = View.GONE
+                    binding.swActivate.visibility = View.VISIBLE
                     isSelected = false
                 } else {
                     Toast.makeText(
@@ -103,24 +94,24 @@ class AlarmAdapter(
                 if (!isSelected) {
                     vibrate()
                     isSelected = true
-                    hide.visibility = View.VISIBLE
-                    btnDelete.visibility = View.VISIBLE
-                    switch.visibility = View.GONE
+                    binding.hide.visibility = View.VISIBLE
+                    binding.btnDelete.visibility = View.VISIBLE
+                    binding.swActivate.visibility = View.GONE
 
-                    btnDelete.setOnClickListener {
+                    binding.btnDelete.setOnClickListener {
                         delete(alarm)
                     }
                 } else {
-                    hide.visibility = View.GONE
-                    btnDelete.visibility = View.GONE
-                    switch.visibility = View.VISIBLE
+                    binding.hide.visibility = View.GONE
+                    binding.btnDelete.visibility = View.GONE
+                    binding.swActivate.visibility = View.VISIBLE
                     isSelected = false
                 }
 
                 true
             }
 
-            txtTime.setOnClickListener { selectTime() }
+            binding.txtTime.setOnClickListener { selectTime() }
         }
 
         @SuppressLint("SetTextI18n")
@@ -141,7 +132,7 @@ class AlarmAdapter(
                         "p.m."
                     }
                     //Muestro la hora con el formato deseado
-                    txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
+                    binding.txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
                 }, //Estos valores deben ir en ese orden
                 //Al colocar en false se muestra en formato 12 horas y true en formato 24 horas
                 //Pero el sistema devuelve la hora en formato 24 horas
@@ -152,17 +143,14 @@ class AlarmAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
-        return ViewHolderData(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_alarm,
-                null,
-                false
-            )
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val recyclerRowBinding: ItemAlarmBinding =
+            ItemAlarmBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(recyclerRowBinding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(listData[position], vibrate, delete)
     }
 
@@ -181,7 +169,7 @@ class AlarmAdapter(
     }
 
     fun add(item: Alarm) {
-        listData.add(0, item)
+        listData.add(item)
         notifyDataSetChanged()
     }
 }
