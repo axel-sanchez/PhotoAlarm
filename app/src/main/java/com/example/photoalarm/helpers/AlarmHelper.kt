@@ -16,7 +16,6 @@ class AlarmHelper: KoinComponent {
     private val calendar: Calendar by inject()
     private val innerCalendar: Calendar by inject()
     private val manager: AlarmManager by inject()
-    private val context: Context by inject()
 
     fun getCurrentDay(): String {
         return when (calendar.get(Calendar.DAY_OF_WEEK)) {
@@ -31,7 +30,7 @@ class AlarmHelper: KoinComponent {
         }
     }
 
-    fun activateAlarm(hourAlarm: Int, minuteAlarm: Int){
+    fun activateAlarm(hourAlarm: Int, minuteAlarm: Int, context: Context?){
         val alarmIntent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
         innerCalendar.apply {

@@ -22,17 +22,17 @@ import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import org.koin.android.ext.android.inject
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+@RequiresApi(Build.VERSION_CODES.M)
 class AlarmFragment : PhotoAlarmFragment() {
 
     private val days: List<Day> by inject()
+    private val calendar: Calendar by inject()
     private val alarmHelper: AlarmHelper by inject()
-
     private val repository: GenericRepository by inject()
+
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
 
-    private val calendar: Calendar by inject()
     private var hour: Int = 0
     private var minute: Int = 0
 
@@ -120,7 +120,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 binding.emptyState.showView(false)
 
-                alarmHelper.activateAlarm(hourOfDay, minute)
+                alarmHelper.activateAlarm(hourOfDay, minute, context)
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden

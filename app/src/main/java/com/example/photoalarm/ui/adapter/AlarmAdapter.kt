@@ -82,11 +82,7 @@ class AlarmAdapter(
                     binding.swActivate.visibility = View.VISIBLE
                     isSelected = false
                 } else {
-                    Toast.makeText(
-                        itemView.context,
-                        "Tengo que lograr como un tipo de zoom con motionLayout",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(itemView.context, "Tengo que lograr como un tipo de zoom con motionLayout", Toast.LENGTH_SHORT).show()
                 }
             }
 
