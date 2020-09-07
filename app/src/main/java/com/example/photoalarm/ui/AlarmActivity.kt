@@ -12,16 +12,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.databinding.ActivityAlarmReceiverBinding
 
-
 class AlarmActivity: AppCompatActivity() {
     private lateinit var binding: ActivityAlarmReceiverBinding
     lateinit var r: Ringtone
 
+    var idAlarm = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityAlarmReceiverBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        idAlarm = intent.extras?.let { it.getInt("idAlarm", 0)}?.let { it }?:0
+
+        binding.label.text = "${binding.label.text} $idAlarm"
+
         soundAlarm()
 
         binding.stop.setOnClickListener {

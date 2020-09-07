@@ -26,7 +26,7 @@ import java.util.*
 class AlarmFragment : PhotoAlarmFragment() {
 
     private val days: List<Day> by inject()
-    private val calendar: Calendar by inject()
+    private val calendar: Calendar = Calendar.getInstance()
     private val alarmHelper: AlarmHelper by inject()
     private val repository: GenericRepository by inject()
 
@@ -120,7 +120,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 binding.emptyState.showView(false)
 
-                alarmHelper.activateAlarm(hourOfDay, minute, context)
+                alarmHelper.activateAlarm(hourOfDay, minute, context, alarm.id.toInt())
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden

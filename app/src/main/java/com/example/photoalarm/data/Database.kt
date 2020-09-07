@@ -15,9 +15,9 @@ class Database(context: Context): SQLiteOpenHelper(context.applicationContext, D
 
     override fun onCreate(db: SQLiteDatabase?) {
         //Create Table
-        db!!.execSQL(SQL_CREATE_ALARM)
-        db.execSQL(SQL_CREATE_DAY_X_ALARM)
-        db.execSQL(SQL_CREATE_WEATHER)
+        db?.execSQL(SQL_CREATE_ALARM)
+        db?.execSQL(SQL_CREATE_DAY_X_ALARM)
+        db?.execSQL(SQL_CREATE_WEATHER)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

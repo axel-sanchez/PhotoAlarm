@@ -17,6 +17,7 @@ import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.ItemAlarmBinding
+import com.example.photoalarm.helpers.AlarmHelper
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.util.*
@@ -31,15 +32,21 @@ class AlarmAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         private val repository: GenericRepository by inject()
+        private val calendar: Calendar by inject()
+        private val alarmHelper: AlarmHelper by inject()
 
         private var isSelected = false
-
-        private val calendar: Calendar = Calendar.getInstance()
 
         private val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
         private val minute: Int = calendar.get(Calendar.MINUTE)
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
+
+            var alarmHour = alarm.time.substring(0,2)
+            var alarmMinute = alarm.time.substring(3,5)
+
+            //binding.timeRest.text = alarmHelper.getTimeRest(alarmHour.toInt(), alarmMinute.toInt())
+            binding.timeRest.text = AlarmHelper.getTimeRest(alarmHour.toInt(), alarmMinute.toInt())
 
             binding.colapsar.setOnClickListener {
                 if (binding.expandableView.isShown) {

@@ -54,6 +54,19 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@+id/txtTime"/>
 
+            <TextView
+                android:id="@+id/timeRest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="4 horas"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toTopOf="@id/txtDays"
+                app:layout_constraintBottom_toBottomOf="@id/txtDays"/>
+
             <CheckBox
                 android:visibility="gone"
                 android:layout_width="wrap_content"
