@@ -17,12 +17,14 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.photoalarm.common.hide
+import com.example.photoalarm.common.show
 import com.example.photoalarm.data.models.Result
 import com.example.photoalarm.databinding.FragmentWeatherBinding
 import com.example.photoalarm.domain.WeatherUseCase
-import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import com.example.photoalarm.viewmodel.WeatherViewModel
 import com.example.photoalarm.viewmodel.WeatherViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +34,7 @@ import kotlin.math.roundToInt
 
 private const val MY_PERMISSIONS_REQUEST_LOCATION = 5254
 
-class WeatherFragment : PhotoAlarmFragment() {
+class WeatherFragment : Fragment() {
 
     private val viewModel: WeatherViewModel by lazy { ViewModelProviders.of(requireActivity(), WeatherViewModelFactory(WeatherUseCase())).get(WeatherViewModel::class.java) }
 
@@ -56,12 +58,10 @@ class WeatherFragment : PhotoAlarmFragment() {
         override fun onProviderDisabled(s: String) {}
     }
 
-    override fun onBackPressFragment() = false
-
     private var fragmentWeatherBinding: FragmentWeatherBinding? = null
     private val binding get() = fragmentWeatherBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentWeatherBinding = FragmentWeatherBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -83,10 +83,10 @@ class WeatherFragment : PhotoAlarmFragment() {
 
     private fun setupViewModelAndObserve(){
         val observer = Observer<Result?> {
-            binding.zeeLoader.showView(false)
+            binding.zeeLoader.hide()
             binding.txtWeather.text = it?.let{ it.main }?.let { main -> main.temp }?.let { temp -> temp.roundToInt().toString() }?: kotlin.run { "" }
-            binding.txtWeather.showView(true)
-            binding.txtMetric.showView(true)
+            binding.txtWeather.show()
+            binding.txtMetric.show()
         }
 
         viewModel.getWeatherLiveData().observe(viewLifecycleOwner, observer)

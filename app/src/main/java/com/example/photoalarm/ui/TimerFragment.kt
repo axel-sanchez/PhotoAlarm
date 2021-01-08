@@ -11,15 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import com.example.photoalarm.R
+import com.example.photoalarm.common.hide
+import com.example.photoalarm.common.show
 import com.example.photoalarm.databinding.FragmentTimerBinding
-import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import com.google.android.material.snackbar.Snackbar
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
 
-class TimerFragment : PhotoAlarmFragment() {
-
-    override fun onBackPressFragment() = false
+class TimerFragment : Fragment() {
 
     private lateinit var threadPlay: ThreadTimer
     var handler = Handler()
@@ -27,12 +27,12 @@ class TimerFragment : PhotoAlarmFragment() {
     var isPlaying = false
     var seconds = 0
     var minutes = 0
-    var miliSeconds = 999
+    var milliSeconds = 999
 
     private var fragmentTimerBinding: FragmentTimerBinding? = null
     private val binding get() = fragmentTimerBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentTimerBinding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,7 +52,7 @@ class TimerFragment : PhotoAlarmFragment() {
             } else {
                 binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                binding.stop.showView(true)
+                binding.stop.show()
                 seconds--
             }
         }
@@ -60,10 +60,10 @@ class TimerFragment : PhotoAlarmFragment() {
         binding.stop.setOnClickListener {
             binding.time.text = resources.getString(R.string.start_time)
             binding.txtHour.text = "0"
-            binding.stop.showView(false)
+            binding.stop.hide()
             binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
-            miliSeconds = 999
+            milliSeconds = 999
             minutes = 0
             seconds = 0
         }
@@ -105,16 +105,16 @@ class TimerFragment : PhotoAlarmFragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun sonarAlarma() {
+    private fun sonarAlarm() {
         val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         val r = RingtoneManager.getRingtone(context, notification)
         r.isLooping = true
         r.play()
 
-        activity!!.runOnUiThread {
-            Snackbar.make(view!!, "Timer Over", Snackbar.LENGTH_INDEFINITE)
+        activity?.runOnUiThread {
+            Snackbar.make(view!!, getString(R.string.time_over), Snackbar.LENGTH_INDEFINITE)
                 .setActionTextColor(Color.RED)
-                .setAction("OK") { r.stop() }
+                .setAction(getString(R.string.ok)) { r.stop() }
                 .show()
         }
     }
@@ -130,8 +130,8 @@ class TimerFragment : PhotoAlarmFragment() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    if (isPlaying) miliSeconds--
-                    if (miliSeconds == 0) {
+                    if (isPlaying) milliSeconds--
+                    if (milliSeconds == 0) {
                         if (seconds == 0) {
                             if (minutes != 0) {
                                 minutes--
@@ -140,14 +140,14 @@ class TimerFragment : PhotoAlarmFragment() {
                                 isPlaying = false
                                 seconds = 0
                                 binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-                                binding.stop.showView(false)
-                                sonarAlarma()
+                                binding.stop.hide()
+                                sonarAlarm()
                                 return
                             }
                         } else {
                             seconds--
                         }
-                        miliSeconds = 999
+                        milliSeconds = 999
                     }
 
                     handler.post {
@@ -157,10 +157,10 @@ class TimerFragment : PhotoAlarmFragment() {
                             var mi = ""
 
                             m = when {
-                                miliSeconds == 0 -> "00"
-                                miliSeconds < 10 -> "00$miliSeconds"
-                                miliSeconds < 100 -> "0$miliSeconds"
-                                else -> miliSeconds.toString()
+                                milliSeconds == 0 -> "00"
+                                milliSeconds < 10 -> "00$milliSeconds"
+                                milliSeconds < 100 -> "0$milliSeconds"
+                                else -> milliSeconds.toString()
                             }
 
                             s = if (seconds < 10) "0$seconds"

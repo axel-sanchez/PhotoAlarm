@@ -7,11 +7,14 @@ import android.content.Intent
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.databinding.ActivityAlarmReceiverBinding
 
+@RequiresApi(Build.VERSION_CODES.P)
 class AlarmActivity: AppCompatActivity() {
     private lateinit var binding: ActivityAlarmReceiverBinding
     lateinit var r: Ringtone

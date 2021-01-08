@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/clock"
+        android:id="@+id/newTimerFragment"
         android:checkable="true"
         android:iconTint="#ffffff"
         android:icon="@drawable/ic_clock_24dp"
         android:title="Reloj"/>
 
     <item
-        android:id="@+id/weather"
+        android:id="@+id/weatherFragment"
         android:checkable="true"
         android:icon="@drawable/ic_weather_24dp"
         android:title="Clima"/>
 
     <item
-        android:id="@+id/alarm"
+        android:id="@+id/alarmFragment"
         android:checkable="true"
         android:icon="@drawable/ic_alarm_24dp"
         android:title="Alarma"/>
 
     <item
-        android:id="@+id/timer"
+        android:id="@+id/timerFragment"
         android:checkable="true"
         android:icon="@drawable/ic_timer_24dp"
         android:title="Temporizador"/>
 
     <item
-        android:id="@+id/chronometer"
+        android:id="@+id/chronometerFragment"
         android:checkable="true"
         android:icon="@drawable/ic_chronometer_24dp"
         android:title="Cronómetro"/>

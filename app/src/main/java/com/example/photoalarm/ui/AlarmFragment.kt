@@ -9,21 +9,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
+import com.example.photoalarm.common.hide
+import com.example.photoalarm.common.show
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.helpers.AlarmHelper
 import com.example.photoalarm.ui.adapter.AlarmAdapter
-import com.example.photoalarm.ui.customs.PhotoAlarmFragment
 import org.koin.android.ext.android.inject
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.M)
-class AlarmFragment : PhotoAlarmFragment() {
+class AlarmFragment : Fragment() {
 
     private val days: List<Day> by inject()
     private val calendar: Calendar = Calendar.getInstance()
@@ -39,8 +41,6 @@ class AlarmFragment : PhotoAlarmFragment() {
     private lateinit var alarm: Alarm
 
     private lateinit var vibe: Vibrator
-
-    override fun onBackPressFragment() = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,7 +118,7 @@ class AlarmFragment : PhotoAlarmFragment() {
 
                 (viewAdapter as AlarmAdapter).add(alarm)
 
-                binding.emptyState.showView(false)
+                binding.emptyState.hide()
 
                 alarmHelper.activateAlarm(hourOfDay, minute, context, alarm.id.toInt())
 
@@ -133,7 +133,7 @@ class AlarmFragment : PhotoAlarmFragment() {
     }
 
     private fun setAdapter(alarms: MutableList<Alarm>) {
-        if (alarms.isEmpty()) binding.emptyState.showView(true)
+        if (alarms.isEmpty()) binding.emptyState.show()
 
         viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
 
@@ -161,9 +161,9 @@ class AlarmFragment : PhotoAlarmFragment() {
 
     private fun showEmptyState() {
         if (viewAdapter.itemCount > 0) {
-            binding.emptyState.showView(false)
+            binding.emptyState.hide()
         } else {
-            binding.emptyState.showView(true)
+            binding.emptyState.show()
         }
     }
 

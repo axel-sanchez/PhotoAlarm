@@ -6,14 +6,13 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.photoalarm.R
+import com.example.photoalarm.common.hide
+import com.example.photoalarm.common.show
 import com.example.photoalarm.databinding.FragmentChronometerBinding
-import com.example.photoalarm.ui.customs.PhotoAlarmFragment
-import java.lang.Exception
 
-class ChronometerFragment : PhotoAlarmFragment() {
-
-    override fun onBackPressFragment() = false
+class ChronometerFragment : Fragment() {
 
     private lateinit var threadPlay: ThreadChronometer
     var handler = Handler()
@@ -50,13 +49,13 @@ class ChronometerFragment : PhotoAlarmFragment() {
             } else {
                 binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
                 isPlaying = true
-                binding.stop.showView(true)
+                binding.stop.show()
             }
         }
 
         binding.stop.setOnClickListener {
             binding.time.text = resources.getString(R.string.start_time)
-            binding.stop.showView(false)
+            binding.stop.hide()
             binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
             isPlaying = false
             miliSeconds = 0
