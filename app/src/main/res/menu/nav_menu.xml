@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/newTimerFragment"
         android:checkable="true"
-        android:iconTint="#ffffff"
+        android:iconTint="@color/white"
         android:icon="@drawable/ic_clock_24dp"
-        android:title="Reloj"/>
+        android:title="@string/reloj"
+        tools:targetApi="o" />
 
     <item
         android:id="@+id/weatherFragment"
         android:checkable="true"
         android:icon="@drawable/ic_weather_24dp"
-        android:title="Clima"/>
+        android:title="@string/clima"/>
 
     <item
         android:id="@+id/alarmFragment"
         android:checkable="true"
         android:icon="@drawable/ic_alarm_24dp"
-        android:title="Alarma"/>
+        android:title="@string/alarma"/>
 
     <item
         android:id="@+id/timerFragment"
         android:checkable="true"
         android:icon="@drawable/ic_timer_24dp"
-        android:title="Temporizador"/>
+        android:title="@string/temporizador"/>
 
     <item
         android:id="@+id/chronometerFragment"
         android:checkable="true"
         android:icon="@drawable/ic_chronometer_24dp"
-        android:title="Cronómetro"/>
+        android:title="@string/cronometro"/>
 </menu>

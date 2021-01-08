@@ -9,5 +9,10 @@
     <string name="ok">OK</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reloj">Reloj</string>
+    <string name="clima">Clima</string>
+    <string name="alarma">Alarma</string>
+    <string name="temporizador">Temporizador</string>
+    <string name="cronometro">Cronómetro</string>
 
 </resources>

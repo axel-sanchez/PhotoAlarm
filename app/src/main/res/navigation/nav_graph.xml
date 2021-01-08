@@ -27,7 +27,7 @@
         tools:layout="@layout/fragment_weather"/>
     <fragment
         android:id="@+id/newTimerFragment"
-        android:name="com.example.photoalarm.ui.NewTimerFragment"
+        android:name="com.example.photoalarm.ui.FirstFragment"
         android:label="fragment_new_timer"
-        tools:layout="@layout/fragment_new_timer" />
+        tools:layout="@layout/fragment_first" />
 </navigation>

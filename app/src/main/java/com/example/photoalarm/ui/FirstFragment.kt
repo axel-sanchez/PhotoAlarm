@@ -12,7 +12,7 @@ import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
 import com.example.photoalarm.databinding.FragmentChronometerBinding
 
-class ChronometerFragment : Fragment() {
+class FirstFragment : Fragment() {
 
     private lateinit var threadPlay: ThreadChronometer
     var handler = Handler()
