@@ -8,7 +8,9 @@ import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.repository.GenericRepository
 import com.example.photoalarm.data.service.ApiService
 import com.example.photoalarm.data.service.ConnectToApi
+import com.example.photoalarm.domain.ChronometerUseCase
 import com.example.photoalarm.helpers.AlarmHelper
+import com.example.photoalarm.viewmodel.ChronometerViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
@@ -42,4 +44,7 @@ val moduleApp = module {
     single { AlarmHelper() }
     single { Calendar.getInstance() }
     single { androidContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
+
+    single { ChronometerUseCase() }
+    single { ChronometerViewModel.ChronometerViewModelFactory(get()) }
 }

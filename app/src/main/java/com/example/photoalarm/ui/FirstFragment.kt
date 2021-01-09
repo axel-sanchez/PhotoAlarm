@@ -1,32 +1,35 @@
 package com.example.photoalarm.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.example.photoalarm.R
 import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
+import com.example.photoalarm.data.models.MyTime
 import com.example.photoalarm.databinding.FragmentChronometerBinding
+import com.example.photoalarm.viewmodel.ChronometerViewModel
+import org.koin.android.ext.android.inject
 
 class FirstFragment : Fragment() {
 
-    private lateinit var threadPlay: ThreadChronometer
-    var handler = Handler()
+    private var m = ""
+    private var s = ""
+    private var mi = ""
 
-    var isPlaying = false
-    var hour = 0
-    var minutes = 0
-    var seconds = 0
-    var milliSeconds = 0
+    private val viewModelFactory: ChronometerViewModel.ChronometerViewModelFactory by inject()
+    private val viewModel: ChronometerViewModel by lazy {
+        ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChronometerViewModel::class.java)
+    }
 
     private var fragmentChronometerBinding: FragmentChronometerBinding? = null
     private val binding get() = fragmentChronometerBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentChronometerBinding = FragmentChronometerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,79 +42,62 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        threadPlay = ThreadChronometer()
-        threadPlay.start()
+        listenerPlayPause()
 
-        binding.btnPlayPause.setOnClickListener {
-            if (isPlaying) {
-                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-                isPlaying = false
-            } else {
-                binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
-                isPlaying = true
-                binding.stop.show()
+        listenerStop()
+
+        setUpObserverViewModel()
+
+    }
+
+    private fun setUpObserverViewModel() {
+        viewModel.getTimeLiveData().observe(viewLifecycleOwner, Observer<MyTime> {
+            it?.let { time ->
+                activity?.runOnUiThread {
+                    m = when {
+                        time.milliSeconds == 0 -> "00"
+                        time.milliSeconds < 10 -> "00${time.milliSeconds}"
+                        time.milliSeconds < 100 -> "0${time.milliSeconds}"
+                        else -> time.milliSeconds.toString()
+                    }
+
+                    s = if (time.seconds < 10) "0${time.seconds}"
+                    else time.seconds.toString()
+
+                    mi = if (time.minutes < 10) "0${time.minutes}"
+                    else time.minutes.toString()
+
+                    binding.time.text = "$mi:$s:$m"
+                    binding.txtHour.text = time.hour.toString()
+                }
             }
-        }
+        })
+    }
 
+    private fun listenerStop() {
         binding.stop.setOnClickListener {
             binding.time.text = resources.getString(R.string.start_time)
             binding.stop.hide()
             binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-            isPlaying = false
-            milliSeconds = 0
-            minutes = 0
-            seconds = 0
-            hour = 0
+            viewModel.doIsPlayedFalse()
+            viewModel.resetTime()
         }
     }
 
-    inner class ThreadChronometer : Thread() {
-        @SuppressLint("SetTextI18n")
-        override fun run() {
-            while (true) {
-                if (isPlaying) {
-                    try {
-                        sleep(1)
-                    } catch (e: Exception) { e.printStackTrace() }
-                    if(isPlaying) milliSeconds++
-                    if (milliSeconds == 999) {
-                        seconds++
-                        milliSeconds = 0
-                    }
-                    if (seconds == 60) {
-                        minutes++
-                        seconds = 0
-                    }
-
-                    if(minutes == 60){
-                        hour++
-                        minutes = 0
-                    }
-
-                    handler.post {
-                        Runnable {
-                            var m = ""
-                            var s = ""
-                            var mi = ""
-
-                            m = when {
-                                milliSeconds == 0 -> "00"
-                                milliSeconds < 10 -> "00$milliSeconds"
-                                milliSeconds < 100 -> "0$milliSeconds"
-                                else -> milliSeconds.toString()
-                            }
-
-                            s = if(seconds < 10) "0$seconds"
-                            else seconds.toString()
-
-                            mi = if(minutes < 10) "0$minutes"
-                            else minutes.toString()
-
-                            binding.time.text = "$mi:$s:$m"
-                            binding.txtHour.text = hour.toString()
-                        }.run()
-                    }
+    private fun listenerPlayPause() {
+        binding.btnPlayPause.setOnClickListener {
+            try {
+                if (viewModel.getIsPlayed()) {
+                    binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                    viewModel.doIsPlayedFalse()
+                } else {
+                    binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
+                    viewModel.doIsPlayedTrue()
+                    binding.stop.show()
+                    viewModel.getTime()
                 }
+            } catch (e: Exception){
+                e.printStackTrace()
             }
         }
     }
