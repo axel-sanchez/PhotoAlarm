@@ -54,6 +54,12 @@ class FirstFragment : Fragment() {
         viewModel.getTimeLiveData().observe(viewLifecycleOwner, Observer<MyTime> {
             it?.let { time ->
                 activity?.runOnUiThread {
+                    if(viewModel.isPlaying){
+                        binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
+                        binding.stop.show()
+                    } else{
+                        binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
+                    }
                     m = when {
                         time.milliSeconds == 0 -> "00"
                         time.milliSeconds < 10 -> "00${time.milliSeconds}"
@@ -79,20 +85,20 @@ class FirstFragment : Fragment() {
             binding.time.text = resources.getString(R.string.start_time)
             binding.stop.hide()
             binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-            viewModel.doIsPlayedFalse()
-            viewModel.resetTime()
+            viewModel.isPlaying = false
+            viewModel.time = MyTime(0, 0, 0, 0)
         }
     }
 
     private fun listenerPlayPause() {
         binding.btnPlayPause.setOnClickListener {
             try {
-                if (viewModel.getIsPlayed()) {
+                if (viewModel.isPlaying) {
                     binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
-                    viewModel.doIsPlayedFalse()
+                    viewModel.isPlaying = false
                 } else {
                     binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_pause_circle_24dp)
-                    viewModel.doIsPlayedTrue()
+                    viewModel.isPlaying = true
                     binding.stop.show()
                     viewModel.getTime()
                 }

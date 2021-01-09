@@ -3,6 +3,7 @@ package com.example.photoalarm.viewmodel
 import androidx.lifecycle.*
 import com.example.photoalarm.data.models.MyTime
 import com.example.photoalarm.domain.ChronometerUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -10,6 +11,10 @@ import kotlinx.coroutines.launch
  * @author Axel Sanchez
  */
 class ChronometerViewModel(private val chronometerUseCase: ChronometerUseCase) : ViewModel() {
+
+    var time: MyTime = MyTime(0, 0, 0, 0)
+
+    var isPlaying = false
 
     private val listData = MutableLiveData<MyTime>()
 
@@ -19,7 +24,7 @@ class ChronometerViewModel(private val chronometerUseCase: ChronometerUseCase) :
 
     fun getTime() {
         viewModelScope.launch {
-            setListData(chronometerUseCase.getTime())
+            countTimer()
         }
     }
 
@@ -27,26 +32,33 @@ class ChronometerViewModel(private val chronometerUseCase: ChronometerUseCase) :
         return listData
     }
 
-    fun getIsPlayed(): Boolean{
-        return chronometerUseCase.isPlaying
+    private suspend fun countTimer() {
+        while (isPlaying) {
+            delay(1)
+            if (isPlaying) time.milliSeconds++
+            if (time.milliSeconds == 999) {
+                time.seconds++
+                time.milliSeconds = 0
+            }
+            if (time.seconds == 60) {
+                time.minutes++
+                time.seconds = 0
+            }
+
+            if (time.minutes == 60) {
+                time.hour++
+                time.minutes = 0
+            }
+            setListData(time)
+        }
     }
 
-    fun doIsPlayedTrue(){
-        chronometerUseCase.isPlaying = true
-    }
-
-    fun doIsPlayedFalse(){
-        chronometerUseCase.isPlaying = false
-    }
-
-    fun resetTime(){
-        chronometerUseCase.time = MyTime(0, 0, 0, 0)
-    }
-
-    class ChronometerViewModelFactory(private val chronometerUseCase: ChronometerUseCase) : ViewModelProvider.Factory {
+    class ChronometerViewModelFactory(private val chronometerUseCase: ChronometerUseCase) :
+        ViewModelProvider.Factory {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return modelClass.getConstructor(ChronometerUseCase::class.java).newInstance(chronometerUseCase)
+            return modelClass.getConstructor(ChronometerUseCase::class.java)
+                .newInstance(chronometerUseCase)
         }
     }
 }
