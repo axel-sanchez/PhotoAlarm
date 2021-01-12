@@ -26,7 +26,6 @@ import com.example.photoalarm.data.models.Result
 import com.example.photoalarm.databinding.FragmentWeatherBinding
 import com.example.photoalarm.domain.WeatherUseCase
 import com.example.photoalarm.viewmodel.WeatherViewModel
-import com.example.photoalarm.viewmodel.WeatherViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -36,7 +35,9 @@ private const val MY_PERMISSIONS_REQUEST_LOCATION = 5254
 
 class WeatherFragment : Fragment() {
 
-    private val viewModel: WeatherViewModel by lazy { ViewModelProviders.of(requireActivity(), WeatherViewModelFactory(WeatherUseCase())).get(WeatherViewModel::class.java) }
+    private val viewModel: WeatherViewModel by lazy { ViewModelProviders.of(requireActivity(),
+        WeatherViewModel.WeatherViewModelFactory(WeatherUseCase())
+    ).get(WeatherViewModel::class.java) }
 
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 0.0

@@ -3,6 +3,7 @@ package com.example.photoalarm.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.photoalarm.data.models.Result
 import com.example.photoalarm.domain.WeatherUseCase
 
@@ -24,5 +25,12 @@ class WeatherViewModel(private val weatherUseCase: WeatherUseCase) : ViewModel()
 
     fun getWeatherLiveData(): LiveData<Result?> {
         return listData
+    }
+
+    class WeatherViewModelFactory(private val weatherUseCase: WeatherUseCase) : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return modelClass.getConstructor(WeatherUseCase::class.java).newInstance(weatherUseCase)
+        }
     }
 }

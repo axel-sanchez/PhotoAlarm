@@ -4,20 +4,23 @@ import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.os.Build
-import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.data.models.Alarm
-import com.example.photoalarm.data.repository.GenericRepository
+import com.example.photoalarm.data.room.Database
 import com.example.photoalarm.databinding.ItemAlarmBinding
 import com.example.photoalarm.helpers.AlarmHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.util.*
@@ -26,12 +29,14 @@ import java.util.*
 class AlarmAdapter(
     private val listData: MutableList<Alarm>,
     private val delete: (Alarm) -> Unit,
-    private val vibrate: () -> Unit) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), KoinComponent {
+    private val vibrate: () -> Unit,
+    private val room: Database,
+    private val scope: LifecycleCoroutineScope
+) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), KoinComponent {
 
     inner class ViewHolder(private val binding: ItemAlarmBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val repository: GenericRepository by inject()
         private val calendar: Calendar by inject()
         private val alarmHelper: AlarmHelper by inject()
 
@@ -42,10 +47,9 @@ class AlarmAdapter(
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
 
-            var alarmHour = alarm.time.substring(0,2)
-            var alarmMinute = alarm.time.substring(3,5)
+            var alarmHour = alarm.time.substring(0, 2)
+            var alarmMinute = alarm.time.substring(3, 5)
 
-            //binding.timeRest.text = alarmHelper.getTimeRest(alarmHour.toInt(), alarmMinute.toInt())
             binding.timeRest.text = AlarmHelper.getTimeRest(alarmHour.toInt(), alarmMinute.toInt())
 
             binding.colapsar.setOnClickListener {
@@ -70,15 +74,19 @@ class AlarmAdapter(
 
             binding.txtDays.text = stringDays
 
-            if (alarm.isActive) binding.swActivate.isChecked = true
+            if (alarm.isActive) binding.switchActivate.isChecked = true
 
-            binding.swActivate.setOnClickListener {
-                if (binding.swActivate.isChecked) {
+            binding.switchActivate.setOnClickListener {
+                if (binding.switchActivate.isChecked) {
                     alarm.isActive = true
-                    repository.update(alarm)
+                    scope.launch {
+                        room.productDao().updateAlarm(alarm)
+                    }
                 } else {
                     alarm.isActive = false
-                    repository.update(alarm)
+                    scope.launch {
+                        room.productDao().updateAlarm(alarm)
+                    }
                 }
             }
 
@@ -86,10 +94,14 @@ class AlarmAdapter(
                 if (isSelected) {
                     binding.hide.visibility = View.GONE
                     binding.btnDelete.visibility = View.GONE
-                    binding.swActivate.visibility = View.VISIBLE
+                    binding.switchActivate.visibility = View.VISIBLE
                     isSelected = false
                 } else {
-                    Toast.makeText(itemView.context, "Tengo que lograr como un tipo de zoom con motionLayout", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        itemView.context,
+                        "Tengo que lograr como un tipo de zoom con motionLayout",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -99,7 +111,7 @@ class AlarmAdapter(
                     isSelected = true
                     binding.hide.visibility = View.VISIBLE
                     binding.btnDelete.visibility = View.VISIBLE
-                    binding.swActivate.visibility = View.GONE
+                    binding.switchActivate.visibility = View.GONE
 
                     binding.btnDelete.setOnClickListener {
                         delete(alarm)
@@ -107,7 +119,7 @@ class AlarmAdapter(
                 } else {
                     binding.hide.visibility = View.GONE
                     binding.btnDelete.visibility = View.GONE
-                    binding.swActivate.visibility = View.VISIBLE
+                    binding.switchActivate.visibility = View.VISIBLE
                     isSelected = false
                 }
 

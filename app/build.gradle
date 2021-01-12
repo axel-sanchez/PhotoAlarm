@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -74,4 +75,8 @@ dependencies {
 
     // WorkManager + coroutines
     implementation "androidx.work:work-runtime-ktx:2.4.0"
+
+    //Room
+    implementation 'androidx.room:room-ktx:2.2.6'
+    kapt "androidx.room:room-compiler:2.2.6"
 }

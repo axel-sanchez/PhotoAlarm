@@ -10,17 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photoalarm.R
 import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
 import com.example.photoalarm.data.models.Alarm
+import com.example.photoalarm.data.models.AlarmXDay
 import com.example.photoalarm.data.models.Day
-import com.example.photoalarm.data.repository.GenericRepository
+import com.example.photoalarm.data.room.Database
 import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.helpers.AlarmHelper
 import com.example.photoalarm.ui.adapter.AlarmAdapter
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.util.*
 
@@ -30,7 +33,7 @@ class AlarmFragment : Fragment() {
     private val days: List<Day> by inject()
     private val calendar: Calendar = Calendar.getInstance()
     private val alarmHelper: AlarmHelper by inject()
-    private val repository: GenericRepository by inject()
+    private val room: Database by inject()
 
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -72,7 +75,10 @@ class AlarmFragment : Fragment() {
             addAlarmFast()
         }
 
-        setAdapter(repository.getAlarms(arrayOf(), arrayOf(), null))
+        lifecycleScope.launch {
+            setAdapter(room.productDao().getAllAlarms().toMutableList())
+        }
+
     }
 
     private fun addAlarmFast() {
@@ -103,16 +109,17 @@ class AlarmFragment : Fragment() {
                     requireVibrate = true
                 )
 
-                alarm.id = repository.insert(alarm)
+                lifecycleScope.launch {
+                    alarm.id = room.productDao().insertAlarm(alarm)
+                }
 
                 for (day in alarm.days) {
                     var idDay = days.find { dia -> dia.name == day }?.id?.toInt()?: kotlin.run { null }
                     idDay?.let {
-                        //Insertamos un dia x alarma
-                        repository.insert(
-                            alarm.id,
-                            it
-                        )
+                        lifecycleScope.launch {
+                            //Insertamos un dia x alarma
+                            room.productDao().insertAlarmXDay(AlarmXDay(0, alarm.id,it))
+                        }
                     }
                 }
 
@@ -135,7 +142,7 @@ class AlarmFragment : Fragment() {
     private fun setAdapter(alarms: MutableList<Alarm>) {
         if (alarms.isEmpty()) binding.emptyState.show()
 
-        viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() })
+        viewAdapter = AlarmAdapter(alarms, { delete(it) }, { vibrate() }, room, lifecycleScope)
 
         viewManager = LinearLayoutManager(this.requireContext())
 
@@ -155,8 +162,10 @@ class AlarmFragment : Fragment() {
     private fun delete(item: Alarm) {
         (viewAdapter as AlarmAdapter).remove(item)
         showEmptyState()
-        repository.deleteDayXAlarm(item.id)
-        repository.deleteAlarm(item.id)
+        lifecycleScope.launch {
+            room.productDao().deleteAlarmXDay(item.id)
+            room.productDao().deleteAlarm(item.id)
+        }
     }
 
     private fun showEmptyState() {

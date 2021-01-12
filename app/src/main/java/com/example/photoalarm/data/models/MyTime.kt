@@ -1,10 +1,12 @@
 package com.example.photoalarm.data.models
 
+import androidx.room.Entity
+
 /**
  * @author Axel Sanchez
  */
-class MyTime(var milliSeconds: Int,
-             var seconds: Int,
-             var minutes: Int,
-             var hour: Int) {
+@Entity class MyTime(var milliSeconds: Int,
+                         var seconds: Int,
+                         var minutes: Int,
+                         var hour: Int) {
 }

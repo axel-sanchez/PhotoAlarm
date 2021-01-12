@@ -1,4 +1,4 @@
-package com.example.photoalarm
+package com.example.photoalarm.application
 
 import android.app.Application
 import com.example.photoalarm.di.moduleApp
