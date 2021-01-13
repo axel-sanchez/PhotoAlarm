@@ -17,5 +17,7 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = findNavController(R.id.fragment)
         bottomNavigationView.setupWithNavController(navController)
+
+        bottomNavigationView.selectedItemId = R.id.alarmFragment
     }
 }
