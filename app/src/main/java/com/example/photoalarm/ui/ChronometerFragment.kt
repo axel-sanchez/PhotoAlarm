@@ -51,7 +51,7 @@ class ChronometerFragment : Fragment() {
     }
 
     private fun setUpObserverViewModel() {
-        viewModel.getTimeLiveData().observe(viewLifecycleOwner, Observer<MyTime> {
+        viewModel.getTimeLiveData().observe(viewLifecycleOwner, {
             it?.let { time ->
                 activity?.runOnUiThread {
                     if(viewModel.isPlaying){

@@ -27,6 +27,7 @@ import com.example.photoalarm.databinding.FragmentWeatherBinding
 import com.example.photoalarm.domain.WeatherUseCase
 import com.example.photoalarm.viewmodel.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -49,7 +50,7 @@ class WeatherFragment : Fragment() {
             longitude = location.longitude
             latitude = location.latitude
 
-            CoroutineScope(Main).launch {
+            CoroutineScope(IO).launch {
                 viewModel.getWeather(latitude.toString(), longitude.toString())
             }
         }

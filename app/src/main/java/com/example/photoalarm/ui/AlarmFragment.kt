@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.photoalarm.R
 import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
@@ -23,11 +26,13 @@ import com.example.photoalarm.data.room.Database
 import com.example.photoalarm.databinding.FragmentAlarmBinding
 import com.example.photoalarm.helpers.AlarmHelper
 import com.example.photoalarm.ui.adapter.AlarmAdapter
+import com.example.photoalarm.workmanager.AlarmWorker
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.time.Duration
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.M)
+@RequiresApi(Build.VERSION_CODES.O)
 class AlarmFragment : Fragment() {
 
     private val days: List<Day> by inject()
@@ -48,7 +53,7 @@ class AlarmFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        vibe = context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibe = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         hour = calendar.get(Calendar.HOUR_OF_DAY)
         minute = calendar.get(Calendar.MINUTE)
@@ -83,9 +88,9 @@ class AlarmFragment : Fragment() {
 
     private fun addAlarmFast() {
         val timePickerDialog = TimePickerDialog(
-            view!!.context,
+            requireView().context,
             R.style.TimePickerTheme,
-            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute -> //Formateo el hora obtenido: antepone el 0 si son menores de 10
+            { _, hourOfDay, minute -> //Formateo el hora obtenido: antepone el 0 si son menores de 10
                 val horaFormateada =
                     if (hourOfDay < 10) java.lang.String.valueOf("0$hourOfDay") else hourOfDay.toString()
                 //Formateo el minuto obtenido: antepone el 0 si son menores de 10
@@ -127,7 +132,9 @@ class AlarmFragment : Fragment() {
 
                 binding.emptyState.hide()
 
-                alarmHelper.activateAlarm(hourOfDay, minute, context, alarm.id.toInt())
+                WorkManager.getInstance(requireContext()).enqueue(buildAlarmWorker(alarm.id))
+
+                //alarmHelper.activateAlarm(hourOfDay, minute, context, alarm.id.toInt())
 
                 //txtTime.text = "$horaFormateada:$minutoFormateado $periodo"
             }, //Estos valores deben ir en ese orden
@@ -135,9 +142,15 @@ class AlarmFragment : Fragment() {
             //Pero el sistema devuelve la hora en formato 24 horas
             hour, minute, false
         )
-        timePickerDialog.window!!.setBackgroundDrawable(view!!.resources.getDrawable(R.drawable.corners_qk))
+        timePickerDialog.window!!.setBackgroundDrawable(requireView().resources.getDrawable(R.drawable.corners_qk))
         timePickerDialog.show()
     }
+
+    private fun buildAlarmWorker(idAlarm: Long) =
+        OneTimeWorkRequestBuilder<AlarmWorker>()
+        .setInitialDelay(Duration.ofSeconds(2))
+        .setInputData(workDataOf("idAlarm" to idAlarm))
+        .build()
 
     private fun setAdapter(alarms: MutableList<Alarm>) {
         if (alarms.isEmpty()) binding.emptyState.show()
