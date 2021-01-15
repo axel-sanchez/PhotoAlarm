@@ -5,26 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.activityViewModels
 import com.example.photoalarm.R
 import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
 import com.example.photoalarm.data.models.MyTime
 import com.example.photoalarm.databinding.FragmentChronometerBinding
+import com.example.photoalarm.domain.ChronometerUseCase
 import com.example.photoalarm.viewmodel.ChronometerViewModel
 import org.koin.android.ext.android.inject
 
 class ChronometerFragment : Fragment() {
 
-    private var m = ""
-    private var s = ""
-    private var mi = ""
+    private var milliSecondsString = ""
+    private var secondsString = ""
+    private var minutesString = ""
 
-    private val viewModelFactory: ChronometerViewModel.ChronometerViewModelFactory by inject()
-    private val viewModel: ChronometerViewModel by lazy {
-        ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChronometerViewModel::class.java)
-    }
+    private val chronometerUseCase: ChronometerUseCase by inject()
+
+    private val viewModel: ChronometerViewModel by activityViewModels(
+        factoryProducer = { ChronometerViewModel.ChronometerViewModelFactory(chronometerUseCase) }
+    )
 
     private var fragmentChronometerBinding: FragmentChronometerBinding? = null
     private val binding get() = fragmentChronometerBinding!!
@@ -47,7 +48,6 @@ class ChronometerFragment : Fragment() {
         listenerStop()
 
         setUpObserverViewModel()
-
     }
 
     private fun setUpObserverViewModel() {
@@ -60,20 +60,20 @@ class ChronometerFragment : Fragment() {
                     } else{
                         binding.btnPlayPause.background = resources.getDrawable(R.drawable.ic_play_circle_24dp)
                     }
-                    m = when {
+                    milliSecondsString = when {
                         time.milliSeconds == 0 -> "00"
                         time.milliSeconds < 10 -> "00${time.milliSeconds}"
                         time.milliSeconds < 100 -> "0${time.milliSeconds}"
                         else -> time.milliSeconds.toString()
                     }
 
-                    s = if (time.seconds < 10) "0${time.seconds}"
+                    secondsString = if (time.seconds < 10) "0${time.seconds}"
                     else time.seconds.toString()
 
-                    mi = if (time.minutes < 10) "0${time.minutes}"
+                    minutesString = if (time.minutes < 10) "0${time.minutes}"
                     else time.minutes.toString()
 
-                    binding.time.text = "$mi:$s:$m"
+                    binding.time.text = "$minutesString:$secondsString:$milliSecondsString"
                     binding.txtHour.text = time.hour.toString()
                 }
             }
