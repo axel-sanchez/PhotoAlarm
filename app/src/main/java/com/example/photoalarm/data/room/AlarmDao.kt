@@ -11,7 +11,7 @@ import com.example.photoalarm.data.models.MyWeather
  */
 
 @Dao
-interface ProductDao {
+interface AlarmDao {
     @Query("SELECT * FROM Alarm")
     suspend fun getAllAlarms(): List<Alarm>
 

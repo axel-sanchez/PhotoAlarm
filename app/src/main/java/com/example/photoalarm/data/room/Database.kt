@@ -18,5 +18,5 @@ import com.example.photoalarm.data.models.MyWeather
 )
 @TypeConverters(Converters::class)
 abstract class Database : RoomDatabase() {
-    abstract fun productDao(): ProductDao
+    abstract fun productDao(): AlarmDao
 }
