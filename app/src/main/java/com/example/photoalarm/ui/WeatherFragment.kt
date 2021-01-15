@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.photoalarm.common.hide
@@ -30,15 +31,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import kotlin.math.roundToInt
 
 private const val MY_PERMISSIONS_REQUEST_LOCATION = 5254
 
 class WeatherFragment : Fragment() {
 
-    private val viewModel: WeatherViewModel by lazy { ViewModelProviders.of(requireActivity(),
-        WeatherViewModel.WeatherViewModelFactory(WeatherUseCase())
-    ).get(WeatherViewModel::class.java) }
+    private val weatherUseCase: WeatherUseCase by inject()
+
+    private val viewModel: WeatherViewModel by activityViewModels(
+        factoryProducer = { WeatherViewModel.WeatherViewModelFactory(weatherUseCase, latitude.toString(), longitude.toString()) }
+    )
 
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 0.0
@@ -49,10 +53,6 @@ class WeatherFragment : Fragment() {
         override fun onLocationChanged(location: Location) {
             longitude = location.longitude
             latitude = location.latitude
-
-            CoroutineScope(IO).launch {
-                viewModel.getWeather(latitude.toString(), longitude.toString())
-            }
         }
 
         override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
@@ -77,7 +77,7 @@ class WeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         toggleUpdates()
 
         setupViewModelAndObserve()
@@ -101,7 +101,7 @@ class WeatherFragment : Fragment() {
     }
 
     private fun showAlert() {
-        val dialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+        val dialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         dialog.setTitle("Enable Location")
             .setMessage("Su ubicación esta desactivada.\npor favor active su ubicación usa esta app")
             .setPositiveButton("Configuración de ubicación") { _, _ ->
@@ -121,7 +121,7 @@ class WeatherFragment : Fragment() {
         if (!checkLocation())
             return
 
-        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) { }
             else {
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)

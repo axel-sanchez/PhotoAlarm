@@ -2,7 +2,6 @@ package com.example.photoalarm.viewmodel
 
 import androidx.lifecycle.*
 import com.example.photoalarm.data.models.MyTime
-import com.example.photoalarm.domain.ChronometerUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -10,7 +9,7 @@ import kotlinx.coroutines.launch
  * View model de [MyFragment]
  * @author Axel Sanchez
  */
-class ChronometerViewModel(private val chronometerUseCase: ChronometerUseCase) : ViewModel() {
+class ChronometerViewModel() : ViewModel() {
 
     var time: MyTime = MyTime(0, 0, 0, 0)
 
@@ -50,15 +49,6 @@ class ChronometerViewModel(private val chronometerUseCase: ChronometerUseCase) :
                 time.minutes = 0
             }
             setListData(time)
-        }
-    }
-
-    class ChronometerViewModelFactory(private val chronometerUseCase: ChronometerUseCase) :
-        ViewModelProvider.Factory {
-
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return modelClass.getConstructor(ChronometerUseCase::class.java)
-                .newInstance(chronometerUseCase)
         }
     }
 }

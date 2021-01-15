@@ -7,9 +7,8 @@ import com.example.photoalarm.data.models.Day
 import com.example.photoalarm.data.room.Database
 import com.example.photoalarm.data.service.ApiService
 import com.example.photoalarm.data.service.ConnectToApi
-import com.example.photoalarm.domain.ChronometerUseCase
+import com.example.photoalarm.domain.WeatherUseCase
 import com.example.photoalarm.helpers.AlarmHelper
-import com.example.photoalarm.viewmodel.ChronometerViewModel
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
@@ -43,12 +42,11 @@ val moduleApp = module {
     single { Calendar.getInstance() }
     single { androidContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
 
-    single { ChronometerUseCase() }
-    single { ChronometerViewModel.ChronometerViewModelFactory(get()) }
-
     single { Room
         .databaseBuilder(androidContext(), Database::class.java, "photoAlarmDB.db3")
         .build() }
 
     single { Gson() }
+
+    single { WeatherUseCase() }
 }

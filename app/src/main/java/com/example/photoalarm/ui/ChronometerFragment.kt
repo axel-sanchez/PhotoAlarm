@@ -11,9 +11,7 @@ import com.example.photoalarm.common.hide
 import com.example.photoalarm.common.show
 import com.example.photoalarm.data.models.MyTime
 import com.example.photoalarm.databinding.FragmentChronometerBinding
-import com.example.photoalarm.domain.ChronometerUseCase
 import com.example.photoalarm.viewmodel.ChronometerViewModel
-import org.koin.android.ext.android.inject
 
 class ChronometerFragment : Fragment() {
 
@@ -21,11 +19,7 @@ class ChronometerFragment : Fragment() {
     private var secondsString = ""
     private var minutesString = ""
 
-    private val chronometerUseCase: ChronometerUseCase by inject()
-
-    private val viewModel: ChronometerViewModel by activityViewModels(
-        factoryProducer = { ChronometerViewModel.ChronometerViewModelFactory(chronometerUseCase) }
-    )
+    private val viewModel: ChronometerViewModel by activityViewModels()
 
     private var fragmentChronometerBinding: FragmentChronometerBinding? = null
     private val binding get() = fragmentChronometerBinding!!
