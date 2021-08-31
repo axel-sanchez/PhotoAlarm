@@ -27,35 +27,12 @@
         android:rotation="-90"
         style="?android:attr/progressBarStyleHorizontal" />
 
-    <LinearLayout
-        android:id="@+id/linearHora"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/time">
-        <TextView
-            android:id="@+id/txtHour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="50sp"
-            android:textColor="@android:color/white" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="h"
-            android:textSize="15sp"
-            android:textColor="@color/white"/>
-    </LinearLayout>
-
-    <TextView
+    <Chronometer
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_time"
         android:textSize="50sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:layout_centerInParent="true"/>
 
     <RelativeLayout

@@ -70,7 +70,7 @@ class FirstFragment : Fragment() {
                     else time.minutes.toString()
 
                     binding.time.text = "$minutesString:$secondsString:$milliSecondsString"
-                    binding.txtHour.text = time.hour.toString()
+                    //binding.txtHour.text = time.hour.toString()
                 }
             }
         })
