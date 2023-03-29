@@ -1,9 +1,5 @@
 package com.example.photoalarm.helpers
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.util.*
@@ -15,7 +11,6 @@ import java.util.*
 class AlarmHelper: KoinComponent {
 
     private val calendar: Calendar by inject()
-    private val manager: AlarmManager by inject()
 
     fun getCurrentDay(): String {
         return when (calendar.get(Calendar.DAY_OF_WEEK)) {
@@ -28,25 +23,6 @@ class AlarmHelper: KoinComponent {
             Calendar.SUNDAY -> "Domingo"
             else -> "Lunes"
         }
-    }
-
-    fun activateAlarm(hourAlarm: Int, minuteAlarm: Int, context: Context?, idAlarm: Int){
-        val innerCalendar: Calendar = Calendar.getInstance()
-        val receiverIntent = Intent(context, AlarmReceiver::class.java)
-        receiverIntent.putExtra("idAlarm", idAlarm)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, 0)
-        innerCalendar.apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, hourAlarm)
-            set(Calendar.MINUTE, minuteAlarm)
-        }
-        manager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            innerCalendar.timeInMillis,
-            //1000 * 60 * 10,
-            1000,
-            pendingIntent
-        )
     }
 
     companion object{

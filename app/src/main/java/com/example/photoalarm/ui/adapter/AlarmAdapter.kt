@@ -47,8 +47,8 @@ class AlarmAdapter(
 
         fun bind(alarm: Alarm, vibrate: () -> Unit, delete: (Alarm) -> Unit) {
 
-            var alarmHour = alarm.time.substring(0, 2)
-            var alarmMinute = alarm.time.substring(3, 5)
+            val alarmHour = alarm.time.substring(0, 2)
+            val alarmMinute = alarm.time.substring(3, 5)
 
             binding.timeRest.text = AlarmHelper.getTimeRest(alarmHour.toInt(), alarmMinute.toInt())
 

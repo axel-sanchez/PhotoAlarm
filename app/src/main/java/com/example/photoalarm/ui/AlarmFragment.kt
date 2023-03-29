@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AlarmFragment : Fragment() {
@@ -122,7 +124,6 @@ class AlarmFragment : Fragment() {
                     var idDay = days.find { dia -> dia.name == day }?.id?.toInt()?: kotlin.run { null }
                     idDay?.let {
                         lifecycleScope.launch {
-                            //Insertamos un dia x alarma
                             room.productDao().insertAlarmXDay(AlarmXDay(0, alarm.id,it))
                         }
                     }
@@ -142,15 +143,31 @@ class AlarmFragment : Fragment() {
             //Pero el sistema devuelve la hora en formato 24 horas
             hour, minute, false
         )
-        timePickerDialog.window!!.setBackgroundDrawable(requireView().resources.getDrawable(R.drawable.corners_qk))
+        timePickerDialog.window?.setBackgroundDrawable(requireView().resources.getDrawable(R.drawable.corners_qk))
         timePickerDialog.show()
     }
 
-    private fun buildAlarmWorker(idAlarm: Long) =
-        OneTimeWorkRequestBuilder<AlarmWorker>()
-        .setInitialDelay(Duration.ofSeconds(2))
-        .setInputData(workDataOf("idAlarm" to idAlarm))
-        .build()
+    private fun buildAlarmWorker(idAlarm: Long): OneTimeWorkRequest {
+
+        val now = Calendar.getInstance()
+        val alarmTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+        }
+
+        if (alarmTime.before(now)) {
+            alarmTime.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        val delay = alarmTime.timeInMillis - now.timeInMillis
+
+        return OneTimeWorkRequestBuilder<AlarmWorker>()
+            .setInitialDelay(2000, TimeUnit.MILLISECONDS)
+            .setInputData(workDataOf("idAlarm" to idAlarm))
+            .build()
+    }
+
 
     private fun setAdapter(alarms: MutableList<Alarm>) {
         if (alarms.isEmpty()) binding.emptyState.show()

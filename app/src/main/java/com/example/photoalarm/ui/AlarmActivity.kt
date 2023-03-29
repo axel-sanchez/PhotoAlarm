@@ -13,11 +13,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.databinding.ActivityAlarmReceiverBinding
+import com.example.photoalarm.workmanager.AlarmWorker
 
 @RequiresApi(Build.VERSION_CODES.P)
 class AlarmActivity: AppCompatActivity() {
     private lateinit var binding: ActivityAlarmReceiverBinding
-    lateinit var r: Ringtone
+    //lateinit var r: Ringtone
 
     var idAlarm = 0
 
@@ -32,17 +33,19 @@ class AlarmActivity: AppCompatActivity() {
 
         binding.label.text = "${binding.label.text} $idAlarm"
 
-        soundAlarm()
+        AlarmWorker.r?.stop()
+
+        //soundAlarm()
 
         binding.stop.setOnClickListener {
-            r.stop()
+            //r.stop()
             disableAlarm()
             val activityIntent = Intent(this, MainActivity::class.java)
             startActivity(activityIntent)
         }
 
         binding.postergar.setOnClickListener {
-            r.stop()
+            //r.stop()
             val activityIntent = Intent(this, MainActivity::class.java)
             startActivity(activityIntent)
         }
@@ -56,8 +59,8 @@ class AlarmActivity: AppCompatActivity() {
 
     private fun soundAlarm() {
         val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        r = RingtoneManager.getRingtone(this, notification)
-        r.isLooping = true
-        r.play()
+        //r = RingtoneManager.getRingtone(this, notification)
+        //r.isLooping = true
+        //r.play()
     }
 }
