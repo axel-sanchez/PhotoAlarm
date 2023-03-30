@@ -85,7 +85,6 @@ class AlarmFragment : Fragment() {
         lifecycleScope.launch {
             setAdapter(room.productDao().getAllAlarms().toMutableList())
         }
-
     }
 
     private fun addAlarmFast() {
@@ -177,14 +176,8 @@ class AlarmFragment : Fragment() {
         viewManager = LinearLayoutManager(this.requireContext())
 
         binding.rvAlarms.apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
-            // use a linear layout manager
             layoutManager = viewManager
-
-            // specify an viewAdapter (see also next example)
             adapter = viewAdapter
         }
     }

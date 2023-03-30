@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -13,7 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.photoalarm.data.models.Alarm
 import com.example.photoalarm.databinding.ActivityAlarmReceiverBinding
-import com.example.photoalarm.workmanager.AlarmWorker
+import com.example.photoalarm.workmanager.AlarmWorker.Companion.r
 
 @RequiresApi(Build.VERSION_CODES.P)
 class AlarmActivity: AppCompatActivity() {
@@ -33,19 +32,17 @@ class AlarmActivity: AppCompatActivity() {
 
         binding.label.text = "${binding.label.text} $idAlarm"
 
-        AlarmWorker.r?.stop()
-
-        //soundAlarm()
+        soundAlarm()
 
         binding.stop.setOnClickListener {
-            //r.stop()
+            r?.stop()
             disableAlarm()
             val activityIntent = Intent(this, MainActivity::class.java)
             startActivity(activityIntent)
         }
 
         binding.postergar.setOnClickListener {
-            //r.stop()
+            r?.stop()
             val activityIntent = Intent(this, MainActivity::class.java)
             startActivity(activityIntent)
         }
@@ -59,8 +56,8 @@ class AlarmActivity: AppCompatActivity() {
 
     private fun soundAlarm() {
         val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        //r = RingtoneManager.getRingtone(this, notification)
-        //r.isLooping = true
-        //r.play()
+        r = RingtoneManager.getRingtone(this, notification)
+        r?.isLooping = true
+        r?.play()
     }
 }
